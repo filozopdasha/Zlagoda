@@ -1,9 +1,21 @@
 .product-table{
-    borderCollapse: 'collapse';
     width: 100%;
     margin-top: 100px;
 }
-
+.search-bar {
+    width: 14%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    position: relative;
+    top: 100px;
+    left: 10.25%;
+}
+.search-bar:hover {
+    border-color: #2546af;
+}
 .title{
     border: 1px solid black;
     padding: 8px;
@@ -14,7 +26,24 @@
     z-index: 1;
     background-color: rgba(163, 195, 238, 0.69);
 }
-
+.delete-product {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+.edit-product {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
 .product-data{
     border: 1px solid black;
     padding: 8px;
@@ -33,4 +62,41 @@
     background-image: linear-gradient(to top, rgba(229, 236, 248, 0.32) 0%, rgba(163, 195, 238, 0.84) 50%, transparent 100%);
     transform: scale(1.03);
     z-index: 2;
+}
+.title:hover::before {
+    content: attr(title);
+    background-color: rgba(139, 182, 239, 0.76);
+    color: white;
+    font-size: 15px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 1;
+}
+.delete-product:hover {
+    background-image: linear-gradient(to top, rgba(248, 229, 233, 0.32) 0%, rgba(238, 163, 174, 0.84) 50%, transparent 100%);
+    text-decoration: underline;
+}
+.edit-product:hover {
+    background-image: linear-gradient(to top, rgba(248, 229, 233, 0.32) 0%, rgba(184, 238, 163, 0.84) 50%, transparent 100%);
+    text-decoration: underline;
+}
+.error-message{
+    text-align: center;
+    position: relative;
+    top: 250px;
+}
+.footer {
+    color: black;
+    padding: 20px 0;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    top: 50%;
+    left: 0;
+    right: 0;
 }
