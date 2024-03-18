@@ -1,0 +1,36 @@
+.product-table{
+    borderCollapse: 'collapse';
+    width: 100%;
+    margin-top: 100px;
+}
+
+.title{
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 1;
+    background-color: rgba(163, 195, 238, 0.69);
+}
+
+.product-data{
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 1;
+}
+.space{
+    padding: 20px;
+}
+.title:hover,
+.product-data:hover {
+    background-image: linear-gradient(to top, rgba(229, 236, 248, 0.32) 0%, rgba(163, 195, 238, 0.84) 50%, transparent 100%);
+    transform: scale(1.03);
+    z-index: 2;
+}

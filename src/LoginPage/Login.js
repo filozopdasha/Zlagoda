@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './LoginStyles.css';
+import MenuBar from "../MenuBar/MenuBar";
 function Login() {
 
 
@@ -33,7 +34,9 @@ function Login() {
                     </div>
 
                     <button type="submit" className="login-button">
-                        Log in
+                        <Link to="/products">
+                            Log in
+                        </Link>
                     </button>
                     <div className="account-actions">
                         <Link to="/signup" className="create-account-button">
