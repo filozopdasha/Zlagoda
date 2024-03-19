@@ -60,7 +60,7 @@ const Products = () => {
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
-        handleSort("product_name")
+        setSortBy("product_name")
     };
 
     const handleSort = (columnName) => {
