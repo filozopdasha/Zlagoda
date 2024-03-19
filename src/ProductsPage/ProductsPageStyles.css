@@ -3,7 +3,7 @@
     margin-top: 100px;
 }
 .search-bar {
-    width: 14%;
+    width: 32.2%;
     padding: 10px;
     margin-bottom: 20px;
     border: 1px solid #ccc;
@@ -12,6 +12,18 @@
     position: relative;
     top: 100px;
     left: 10.25%;
+}
+.add-product{
+    background-color: rgba(163, 195, 238, 0.69);
+    width: 8%;
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    position: relative;
+    top: 100px;
+    right: -48%;
 }
 .search-bar:hover {
     border-color: #2546af;
@@ -78,11 +90,14 @@
     z-index: 1;
 }
 .delete-product:hover {
-    background-image: linear-gradient(to top, rgba(248, 229, 233, 0.32) 0%, rgba(238, 163, 174, 0.84) 50%, transparent 100%);
+    background-color: rgba(241, 178, 195, 0.67);
+    background-image: linear-gradient(to top, rgba(250, 178, 191, 0.32) 0%, rgba(241, 108, 139, 0.84) 50%, transparent 100%);
     text-decoration: underline;
 }
-.edit-product:hover {
-    background-image: linear-gradient(to top, rgba(248, 229, 233, 0.32) 0%, rgba(184, 238, 163, 0.84) 50%, transparent 100%);
+.edit-product:hover,
+.add-product:hover {
+    background-color: rgba(184, 241, 178, 0.67);
+    background-image: linear-gradient(to top, rgba(190, 250, 178, 0.32) 0%, rgba(145, 241, 108, 0.84) 50%, transparent 100%);
     text-decoration: underline;
 }
 .error-message{

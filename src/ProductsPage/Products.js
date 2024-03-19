@@ -7,7 +7,7 @@ const Products = () => {
     const [fetchError, setFetchError] = useState(null);
     const [products, setProducts] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const [sortBy, setSortBy] = useState(null);
+    const [sortBy, setSortBy] = useState("id_product");
     const [sortOrder, setSortOrder] = useState("asc");
 
     useEffect(() => {
@@ -31,15 +31,36 @@ const Products = () => {
     }, [sortBy, sortOrder]);
 
     const handleDeleteProduct = async (productId) => {
-        console.log("Deleting product with ID:", productId);
+        try {
+            const { error } = await supabase
+                .from('Product')
+                .delete()
+                .eq('id_product', productId);
+
+            if (error) throw new Error('Could not delete product');
+            setProducts(prevProducts => prevProducts.filter(product => product.id_product !== productId));
+        } catch (error) {
+            console.error('Error deleting product:', error.message);
+        }
     };
 
     const handleEditProduct = async (productId) => {
-        console.log("Editing product with ID:", productId);
+        try {
+            const { error } = await supabase
+                .from('Product')
+                .delete()
+                .eq('id_product', productId);
+
+            if (error) throw new Error('Could not delete product');
+            setProducts(prevProducts => prevProducts.filter(product => product.id_product !== productId));
+        } catch (error) {
+            console.error('Error deleting product:', error.message);
+        }
     };
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
+        handleSort("product_name")
     };
 
     const handleSort = (columnName) => {
@@ -52,7 +73,8 @@ const Products = () => {
     };
 
     let filteredProducts = products ? products.filter(product =>
-        product.product_name.toLowerCase().startsWith(searchQuery.toLowerCase())
+        product.product_name.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
+        product.category_number === parseInt(searchQuery)
     ) : [];
 
     return (
@@ -61,11 +83,12 @@ const Products = () => {
             {fetchError && (<p>{fetchError}</p>)}
             <input
                 type="text"
-                placeholder="Search products by name..."
+                placeholder="Search products by name or category number..."
                 value={searchQuery}
                 onChange={handleSearch}
                 className="search-bar"
             />
+            <button className="add-product">Add product</button>
             {filteredProducts.length > 0 && (
                 <div className="products">
                     <div style={{width: '80%', margin: '0 auto'}}>
