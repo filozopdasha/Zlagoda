@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import './ProductsPageStyles.css';
 import MenuBar from "../MenuBar/MenuBar";
+import AddProductPage from "./AddProductPage";
+import {NavLink, useNavigate} from "react-router-dom";
 
-const Products = () => {
+const ProductsPage = () => {
+    const navigate = useNavigate()
+
     const [fetchError, setFetchError] = useState(null);
     const [products, setProducts] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
@@ -31,31 +35,9 @@ const Products = () => {
     }, [sortBy, sortOrder]);
 
     const handleDeleteProduct = async (productId) => {
-        try {
-            const { error } = await supabase
-                .from('Product')
-                .delete()
-                .eq('id_product', productId);
-
-            if (error) throw new Error('Could not delete product');
-            setProducts(prevProducts => prevProducts.filter(product => product.id_product !== productId));
-        } catch (error) {
-            console.error('Error deleting product:', error.message);
-        }
     };
 
     const handleEditProduct = async (productId) => {
-        try {
-            const { error } = await supabase
-                .from('Product')
-                .delete()
-                .eq('id_product', productId);
-
-            if (error) throw new Error('Could not delete product');
-            setProducts(prevProducts => prevProducts.filter(product => product.id_product !== productId));
-        } catch (error) {
-            console.error('Error deleting product:', error.message);
-        }
     };
 
     const handleSearch = (e) => {
@@ -88,7 +70,9 @@ const Products = () => {
                 onChange={handleSearch}
                 className="search-bar"
             />
-            <button className="add-product">Add product</button>
+            <button className="add-product">
+                <NavLink to="/add-product" className="add-product-text">Add Product</NavLink>
+            </button>
             {filteredProducts.length > 0 && (
                 <div className="products">
                     <div style={{width: '80%', margin: '0 auto'}}>
@@ -150,4 +134,4 @@ const Products = () => {
     );
 };
 
-export default Products;
+export default ProductsPage;

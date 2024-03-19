@@ -25,6 +25,10 @@
     top: 100px;
     right: -48%;
 }
+.add-product-text{
+    font-size: 15px;
+    color: black;
+}
 .search-bar:hover {
     border-color: #2546af;
 }
