@@ -35,6 +35,22 @@ const ProductsPage = () => {
     }, [sortBy, sortOrder]);
 
     const handleDeleteProduct = async (productId) => {
+        const {data, error} = await supabase
+            .from("Product")
+            .delete()
+            .eq('id_product', productId)
+            .select()
+
+        if(error){
+            console.log(error)
+        }
+        if(data){
+            console.log(data)
+            setProducts(prevRroducts =>{
+                return prevRroducts.filter(pr => pr.id_product !== productId)
+            })
+        }
+
     };
 
     const handleEditProduct = async (productId) => {
