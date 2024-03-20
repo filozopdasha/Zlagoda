@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import supabase from "../config/supabaseClient";
 import './ProductsPageStyles.css';
 import MenuBar from "../MenuBar/MenuBar";
-import AddProductPage from "./AddProductPage";
 import {NavLink, useNavigate} from "react-router-dom";
 
 const ProductsPage = () => {
@@ -124,8 +123,8 @@ const ProductsPage = () => {
                                     <td className="product-data edit-product">
                                         <button
                                             className="edit-product title"
-                                            title="Edit product"
-                                            onClick={() => handleEditProduct(product.id_product)}>✎
+                                            title="Edit product">
+                                            <NavLink to={"/"+product.id_product} className="add-product-text">✎</NavLink>
                                         </button>
                                     </td>
                                 </tr>
