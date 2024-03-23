@@ -1,0 +1,76 @@
+.zlagoda-form {
+    font-size: 40px;
+    font-family: "Copperplate Gothic Bold";
+    font-weight: bold;
+    color: white;
+    padding: 8px;
+    margin-left: 37%;
+}
+.add-product-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This will make the container full height of the viewport */
+}
+.add-product-form {
+    border-radius: 10px;
+    border-color: #f1f1ec;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    background-image: linear-gradient(to top, rgba(229, 236, 248, 0.32) 0%, rgba(163, 195, 238, 0.84) 50%, transparent 100%);
+    width: 50%;
+    padding: 20px;
+}
+.add-product-form label {
+    margin-bottom: 20px;
+    margin-left: 10%;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+.add-product-form input{
+    width: 100%;
+    padding: 8px;
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 10px;
+    margin-left: 10%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+.add-product-form select {
+    width: 103%;
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.62);
+    margin-bottom: 10px;
+    margin-left: 10%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+.add-product-form button {
+    background-color: #00050a;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-left: 52%;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+}
+.add-product-form button:hover {
+    background-color: rgba(13, 108, 13, 0.84);
+}
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 38%;
+}
+.add-error-message{
+    font-size: 30px;
+    font-family: "Copperplate Gothic Bold";
+    font-weight: bold;
+    color: #ef0909;
+    padding: 8px;
+    margin-left: 7%;
+}
