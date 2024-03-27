@@ -1,3 +1,5 @@
+/* AddProductPageStyles.css */
+
 .zlagoda-form {
     font-size: 40px;
     font-family: "Copperplate Gothic Bold";
@@ -6,28 +8,30 @@
     padding: 8px;
     margin-left: 37%;
 }
-.add-employee-form-container {
+
+.add-category-form-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* This will make the container full height of the viewport */
+    height: 100vh;
 }
-.add-employee-form {
+
+.add-category-form {
     border-radius: 10px;
     border-color: #f1f1ec;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
     background-image: linear-gradient(to top, rgba(229, 236, 248, 0.32) 0%, rgba(163, 195, 238, 0.84) 50%, transparent 100%);
     width: 50%;
     padding: 20px;
-    margin-left: 25%;
 }
-.add-employee-form label {
+
+.add-category-form label {
     margin-bottom: 20px;
     margin-left: 10%;
     font-family: 'Helvetica Neue', sans-serif;
 }
 
-.add-employee-form input{
+.add-category-form input {
     width: 100%;
     padding: 8px;
     background-color: rgb(255, 255, 255);
@@ -37,7 +41,8 @@
     border-radius: 4px;
     font-family: 'Helvetica Neue', sans-serif;
 }
-.add-employee-form select {
+
+.add-category-form select {
     width: 103%;
     padding: 8px;
     background-color: rgba(255, 255, 255, 0.62);
@@ -48,7 +53,7 @@
     font-family: 'Helvetica Neue', sans-serif;
 }
 
-.add-employee-form button {
+.add-category-form button {
     background-color: #00050a;
     color: #fff;
     border: none;
@@ -59,15 +64,18 @@
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 15px;
 }
-.add-employee-form button:hover {
+
+.add-category-form button:hover {
     background-color: rgba(13, 108, 13, 0.84);
 }
+
 .action-buttons {
     display: flex;
     justify-content: space-between;
     margin-right: 38%;
 }
-.add-error-message{
+
+.add-error-message {
     font-size: 30px;
     font-family: "Copperplate Gothic Bold";
     font-weight: bold;

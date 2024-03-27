@@ -1,0 +1,100 @@
+.categories.page {
+    padding: 20px;
+    margin-top: 100px;
+    margin-left: 5%;
+}
+.search-bar-categories {
+    width: 32.2%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+}
+.add-category{
+    background-color: rgba(163, 195, 238, 0.69);
+    width: 10%;
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    position: relative;
+}
+.add-category-text{
+    color: black;
+}
+.search-bar-categories:hover {
+    border-color: #2546af;
+}
+.category-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 250px));
+    gap: 20px;
+}
+
+.category-card {
+    background-image: linear-gradient(to top, rgba(229, 236, 248, 0.32) 0%, rgba(163, 195, 238, 0.84) 50%, transparent 100%);
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.category-card:hover{
+    transform: scale(1.03);
+    z-index: 2;
+}
+
+.category-card h3 {
+    margin-top: 0;
+}
+
+.category-card p {
+    margin-bottom: 10px;
+}
+
+.category-card button {
+    background-color: rgba(163, 195, 238, 0.69);
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.delete-category:hover {
+    background-color: rgba(241, 178, 195, 0.67);
+    background-image: linear-gradient(to top, rgba(250, 178, 191, 0.32) 0%, rgba(241, 108, 139, 0.84) 50%, transparent 100%);
+    text-decoration: underline;
+}
+.add-category:hover,
+.edit-category:hover {
+    background-color: rgba(184, 241, 178, 0.67);
+    background-image: linear-gradient(to top, rgba(190, 250, 178, 0.32) 0%, rgba(145, 241, 108, 0.84) 50%, transparent 100%);
+    text-decoration: underline;
+}
+
+.sort:hover,
+.show-products:hover {
+    background-color: rgba(163, 195, 238, 0.69);
+    background-image: linear-gradient(to top, rgba(229, 236, 248, 0.32) 0%, rgba(95, 155, 236, 0.84) 50%, transparent 100%);
+}
+
+.contact-info hr{
+    width: 120%;
+    margin-left: -10%;
+}
+.popup-container-category{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    width: 90%;
+    max-width: 700px;
+}
+.popup-content-category {
+    text-align: center;
+    position: relative;
+}
+

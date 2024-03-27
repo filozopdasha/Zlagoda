@@ -11,13 +11,16 @@ const MenuBar = () => {
                         <span className="zlagoda">Zlagoda</span>
                     </li>
                     <li className="nav-item">
-                        <NavLink to="/" className="nav-link" activeClassName="active">Login</NavLink>
-                    </li>
-                    <li className="nav-item">
                         <NavLink to="/products" className="nav-link" activeClassName="active">Products</NavLink>
                     </li>
                     <li className="nav-item">
+                        <NavLink to="/categories" className="nav-link" activeClassName="active">Categories</NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink to="/employees" className="nav-link" activeClassName="active">Employees</NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink to="/" className="nav-link" activeClassName="active">Login</NavLink>
                     </li>
                 </ul>
             </nav>
