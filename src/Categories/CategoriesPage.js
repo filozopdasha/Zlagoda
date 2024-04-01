@@ -9,24 +9,23 @@ const CategoriesPage = () => {
     const [categories, setCategories] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [sortBy, setSortBy] = useState("category_number");
-    const [sortOrder, setSortOrder] = useState("asc");
+    const [sortOrder, setSortOrder] = useState("ASC");
     const [showPopup, setShowPopup] = useState(false);
     const [popupCategory, setPopupCategory] = useState(null);
 
     useEffect(() => {
         const fetchCategories = async () => {
-            let query = supabase.from('Category').select();
-            if (sortBy) query = query.order(sortBy, { ascending: sortOrder === "asc" });
-            const { data, error } = await query;
-            if (error) {
-                setFetchError('Could not fetch the categories');
-                setCategories(null);
-                console.log(error);
-            }
-            if (data) {
+            try {
+                const response = await fetch(`http://localhost:8081/get-category?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch the categories');
+                }
+                const data = await response.json();
                 setCategories(data);
                 setFetchError(null);
-                console.log(data);
+            } catch (error) {
+                setFetchError(error.message);
+                setCategories(null);
             }
         };
 
@@ -34,20 +33,14 @@ const CategoriesPage = () => {
     }, [sortBy, sortOrder]);
 
     const handleDeleteCategory = async (categoryNumber) => {
-        const { data, error } = await supabase
-            .from("Category")
-            .delete()
-            .eq('category_number', categoryNumber)
-            .select();
-
-        if (error) {
-            console.log(error);
-        }
-        if (data) {
-            console.log(data);
-            setCategories(prevCategories => {
-                return prevCategories.filter(ca => ca.category_number !== categoryNumber);
-            });
+        try {
+            const response = await fetch(`http://localhost:8081/delete-category/${categoryNumber}`, { method: 'DELETE' });
+            if (!response.ok) {
+                throw new Error('Could not delete category');
+            }
+            setCategories(prevCategories => prevCategories.filter(ca => ca.category_number !== categoryNumber));
+        } catch (error) {
+            console.error(error.message);
         }
     };
 
@@ -58,10 +51,10 @@ const CategoriesPage = () => {
 
     const handleSort = (columnName) => {
         if (sortBy === columnName) {
-            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+            setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
         } else {
             setSortBy(columnName);
-            setSortOrder("asc");
+            setSortOrder("ASC");
         }
     };
 
@@ -72,20 +65,19 @@ const CategoriesPage = () => {
 
     const handlePopup = async (categoryNumber) => {
         setShowPopup(true);
-        const { data, error } = await supabase
-            .from('Product')
-            .select('*')
-            .eq('category_number', categoryNumber);
-
-        if (error) {
-            console.error('Error fetching category products:', error.message);
-            return;
-        }
-
-        if (data) {
+        try {
+            const response = await fetch(`http://localhost:8081/get-products/${categoryNumber}?sortBy=id_product&sortOrder=asc`);
+            if (!response.ok) {
+                throw new Error('Could not fetch products');
+            }
+            const data = await response.json();
             setPopupCategory(data);
+        } catch (error) {
+            console.error('Error fetching category products:', error.message);
         }
     };
+
+
 
     const handleClosePopup = () => {
         setShowPopup(false);

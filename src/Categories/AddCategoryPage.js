@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import './AddCategoryPageStyles.css';
 
@@ -13,32 +12,27 @@ const AddCategoryPage = () => {
 
     useEffect(() => {
         const fetchMaxId = async () => {
-            const { data, error } = await supabase
-                .from('Category')
-                .select('category_number');
-
-            if (error) {
-                console.error('Error fetching category numbers:', error.message);
-                return;
-            }
-
-            const existingCategoryNumbers = data.map(category => category.category_number);
-            const maxCategoryNumber = Math.max(...existingCategoryNumbers, 0);
-
-            // Generate numbers from 1 to max category number that don't exist in the table
-            const availableNumbers = [];
-            for (let i = 1; i <= maxCategoryNumber; i++) {
-                if (!existingCategoryNumbers.includes(i)) {
-                    availableNumbers.push(i);
+            try {
+                const response = await fetch('http://localhost:8081/get-max-category-number');
+                if (!response.ok) {
+                    throw new Error('Could not fetch max category number');
                 }
-            }
+                const categoryNumbers = await response.json();
 
-            // Append the range [max category number + 1, max category number + 21]
-            for (let i = maxCategoryNumber + 1; i <= maxCategoryNumber + 21; i++) {
-                availableNumbers.push(i);
-            }
+                const existingCategoryNumbers = categoryNumbers.map(category => category.category_number);
+                const maxNumber = Math.max(...existingCategoryNumbers, 0);
 
-            setCategoryNumberOptions(availableNumbers);
+                const availableNumbers = [];
+                for (let i = 1; i <= maxNumber + 21; i++) {
+                    if (!existingCategoryNumbers.includes(i)) {
+                        availableNumbers.push(i);
+                    }
+                }
+
+                setCategoryNumberOptions(availableNumbers);
+            } catch (error) {
+                console.error('Error fetching max category number:', error.message);
+            }
         };
 
         fetchMaxId();
@@ -52,18 +46,26 @@ const AddCategoryPage = () => {
             return;
         }
 
-        const { data, error } = await supabase
-            .from("Category")
-            .insert([{ category_number: selectedCategoryNumber, category_name: categoryName }]);
+        try {
+            const response = await fetch('http://localhost:8081/add-category', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    category_number: selectedCategoryNumber,
+                    category_name: categoryName }),
+            });
 
-        if (error) {
+            if (!response.ok) {
+                throw new Error('An error occurred while adding a new category. Please try again.');
+            }
+
+            navigate('/categories');
+        } catch (error) {
             console.error('Error inserting category:', error.message);
             setFormError("An error occurred while adding a new category. Please try again.");
-            return;
         }
-
-        navigate('/categories');
-        console.log('Category added successfully:', data);
     };
 
     const handleCancel = () => {
