@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import { useNavigate, useParams } from "react-router-dom";
 import './AddEmployeePageStyles.css';
 import { format } from 'date-fns';
@@ -9,6 +8,7 @@ const EditEmployeePage = () => {
     const navigate = useNavigate();
 
     // Table attributes
+    const [formError, setFormError] = useState('');
     const [emplName, setName] = useState('');
     const [emplSurname, setSurname] = useState('');
     const [emplPatronymic, setPatronymic] = useState('');
@@ -20,80 +20,74 @@ const EditEmployeePage = () => {
     const [emplCity, setCity] = useState('');
     const [emplStreet, setStreet] = useState('');
     const [zipCode, setZipCode] = useState('');
-    const [formError, setFormError] = useState('');
-
-
-
 
     useEffect(() => {
         const fetchEmployee = async () => {
-            const { data, error } = await supabase
-                .from('Employee')
-                .select('*')
-                .eq('id_employee', idempl)
-                .single();
+            try {
+                const response = await fetch(`http://localhost:8081/get-employees?sortBy=${"id_employee"}&sortOrder=${"ASC"}`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch employees');
+                }
+                const data = await response.json();
+                let empl = data ? data.find(data => data.id_employee === idempl) : null;
 
-            if (error) {
-                console.error('Error fetching employee:', error.message);
-                return;
-            }
-            if (data) {
-                setName(data.empl_name);
-                setSurname(data.empl_surname)
-                setPatronymic(data.empl_patronymic)
-                setRole(data.empl_role)
-                setSalary(data.salary)
-                setDateOfBirth(data.date_of_birth)
-                setDateOfStart(data.date_of_start)
-                setPhoneNumber(data.phone_number)
-                setCity(data.city)
-                setStreet(data.street)
-                setZipCode(data.zip_code)
-
+                const Birth = format(new Date(empl.date_of_birth), 'yyyy-MM-dd');
+                const Start = format(new Date(empl.date_of_start), 'yyyy-MM-dd');
+                setName(empl.empl_name);
+                setSurname(empl.empl_surname);
+                setPatronymic(empl.empl_patronymic);
+                setRole(empl.empl_role);
+                setSalary(empl.salary);
+                setDateOfBirth(Birth);
+                setDateOfStart(Start);
+                setPhoneNumber(empl.phone_number);
+                setCity(empl.city);
+                setStreet(empl.street);
+                setZipCode(empl.zip_code);
+            }catch (error){
+                console.error(error)
             }
         };
-
         fetchEmployee();
     }, [idempl]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!emplName) {
+        if (!emplName || !emplSurname || !emplPatronymic || !emplRole || !emplSalary || !dateOfBirth || !dateOfStart || !phoneNumber
+        || !emplCity || !emplStreet || !zipCode) {
             setFormError("Please fill in all the fields correctly!");
             return;
         }
+        try {
+            const response = await fetch(`http://localhost:8081/update-employee/${idempl}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    empl_name: emplName,
+                    empl_surname: emplSurname,
+                    empl_patronymic: emplPatronymic,
+                    empl_role: emplRole,
+                    salary: emplSalary,
+                    date_of_birth: dateOfBirth,
+                    date_of_start: dateOfStart,
+                    phone_number: phoneNumber,
+                    city: emplCity,
+                    street: emplStreet,
+                    zip_code: zipCode,
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update employee');
 
-        // Format date strings to 'YYYY-MM-DD' format
-        const formattedDateOfBirth = format(new Date(dateOfBirth), 'yyyy-MM-dd');
-        const formattedDateOfStart = format(new Date(dateOfStart), 'yyyy-MM-dd');
+            }
 
-        const { data, error } = await supabase
-            .from("Employee")
-            .update({
-                id_employee: idempl,
-                empl_name: emplName,
-                empl_surname: emplSurname,
-                empl_patronymic: emplPatronymic,
-                empl_role: emplRole,
-                salary: emplSalary,
-                date_of_birth: formattedDateOfBirth, // Use formatted date string
-                date_of_start: formattedDateOfStart, // Use formatted date string
-                phone_number: phoneNumber,
-                city: emplCity,
-                street: emplStreet,
-                zip_code: zipCode
-            })
-            .eq('id_employee', idempl);
-
-        if (error) {
+            navigate('/employees');
+        } catch (error) {
             console.error('Error updating employee:', error.message);
-            setFormError("An error occurred while updating employee. Please try again.");
-            return;
         }
-
-        navigate('/employees');
-        console.log('Employee updated successfully:', data);
     };
 
 
@@ -103,7 +97,7 @@ const EditEmployeePage = () => {
 
     return (
         <div className="add-employee-form-container">
-            <div className="add-employee-form">
+            <div className="edit-employee-form">
                 {formError && <p className="add-error-message">{formError}</p>}
                 <h2 className="zlagoda-form">Zlagoda</h2>
                 <form onSubmit={handleSubmit}>

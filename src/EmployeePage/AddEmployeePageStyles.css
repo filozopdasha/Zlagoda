@@ -21,12 +21,23 @@
     padding: 20px;
     margin-left: 25%;
 }
+.edit-employee-form {
+    border-radius: 10px;
+    border-color: #f1f1ec;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    background-image: linear-gradient(to top, rgba(229, 236, 248, 0.32) 0%, rgba(163, 195, 238, 0.84) 50%, transparent 100%);
+    width: 50%;
+    padding: 20px;
+    margin-left: 5%;
+    margin-top: 20%;
+}
+.edit-employee-form label,
 .add-employee-form label {
     margin-bottom: 20px;
     margin-left: 10%;
     font-family: 'Helvetica Neue', sans-serif;
 }
-
+.edit-employee-form input,
 .add-employee-form input{
     width: 100%;
     padding: 8px;
@@ -37,6 +48,7 @@
     border-radius: 4px;
     font-family: 'Helvetica Neue', sans-serif;
 }
+.edit-employee-form select,
 .add-employee-form select {
     width: 103%;
     padding: 8px;
@@ -47,7 +59,7 @@
     border-radius: 4px;
     font-family: 'Helvetica Neue', sans-serif;
 }
-
+.edit-employee-form button,
 .add-employee-form button {
     background-color: #00050a;
     color: #fff;
@@ -59,6 +71,7 @@
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 15px;
 }
+.edit-employee-form button:hover,
 .add-employee-form button:hover {
     background-color: rgba(13, 108, 13, 0.84);
 }

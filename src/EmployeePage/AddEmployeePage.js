@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import './AddEmployeePageStyles.css';
 
 const AddEmployeePage = () => {
     const navigate = useNavigate();
-    const [fetchError, setFetchError] = useState(null);
-    const [categoryArray, setCategoryArray] = useState(null);
     const [formError, setFormError] = useState('');
 
     // Table attributes
     const [id, setId] = useState('');
-  //  const [category, setCategory] = useState('');
     const [emplName, setName] = useState('');
     const [emplSurname, setSurname] = useState('');
     const [emplPatronymic, setPatronymic] = useState('');
@@ -23,48 +19,37 @@ const AddEmployeePage = () => {
     const [emplCity, setCity] = useState('');
     const [emplStreet, setStreet] = useState('');
     const [zipCode, setZipCode] = useState('');
- //   const [characteristics, setCharacteristics] = useState('');
-  //  const [manufacturer, setManufacturer] = useState('');
-    //const [formError, setFormError] = useState('');
 
-    useEffect(() => {
-        const fetchCategory = async () => {
-            let query = supabase.from('Category').select();
-            const { data, error } = await query;
-            if (error) {
-                setFetchError('Could not fetch the categories');
-                setCategoryArray(null);
-                console.log(error);
-            }
-            if (data) {
-                setCategoryArray(data);
-                setFetchError(null);
-                console.log(data);
-            }
-        };
-
-        fetchCategory();
-    }, []);
 
     useEffect(() => {
         const fetchMaxId = async () => {
-            const { data, error } = await supabase
-                .from('Employee')
-                .select('id_employee', { count: 'exact' })
-                .order('id_employee', { ascending: false })
-                .limit(1);
-
-            if (error) {
+            try {
+                const response = await fetch('http://localhost:8081/get-max-employee-id');
+                if (!response.ok) {
+                    throw new Error('Could not fetch max id');
+                }
+                const data = await response.json();
+                let newId = parseInt(data.maxid) + 1
+                setId(newId)
+            } catch (error) {
                 console.error('Error fetching max id:', error.message);
-                return;
             }
-
-            const maxId = data.length > 0 ? data[0].id_employee : 0;
-            setId(maxId + 1);
         };
 
         fetchMaxId();
     }, []);
+
+    const generatePassword = () => {
+        const length = 8;
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
+        }
+        return password;
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -74,19 +59,38 @@ const AddEmployeePage = () => {
             return;
         }
 
-        const { data, error } = await supabase
-            .from("Employee")
-            .insert([{ id_employee:id, empl_name:emplName, empl_surname:emplSurname, empl_patronymic:emplPatronymic, empl_role:emplRole, salary:emplSalary, date_of_birth:dateOfBirth
-            , date_of_start:dateOfStart, phone_number:phoneNumber, city:emplCity, street:emplStreet, zip_code:zipCode}]);
+        let password = generatePassword()
+        try {
+            const response = await fetch('http://localhost:8081/add-employee', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id_employee: id,
+                    empl_name: emplName,
+                    empl_surname: emplSurname,
+                    password: password,
+                    empl_patronymic: emplPatronymic,
+                    empl_role: emplRole,
+                    salary: emplSalary,
+                    date_of_birth: dateOfBirth,
+                    date_of_start: dateOfStart,
+                    phone_number: phoneNumber,
+                    city: emplCity,
+                    street: emplStreet,
+                    zip_code: zipCode,
+                })
+            });
 
-        if (error) {
-            console.error('Error inserting employee:', error.message);
-            setFormError("An error occurred while adding the employee. Please try again.");
-            return;
+            if (!response.ok) {
+                throw new Error('Failed to add employee');
+            }
+
+            navigate('/employees');
+        } catch (error) {
+            console.error('Error adding employee:', error.message);
         }
-
-        navigate('/employees')
-        console.log('Employee added successfully:', data);
     };
 
     const handleCancel = () => {

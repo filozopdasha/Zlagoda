@@ -1,4 +1,3 @@
-
 import './App.css';
 import Login from '../LoginPage/Login';
 import {BrowserRouter, useLocation, Routes, Route, Link} from 'react-router-dom';
@@ -14,6 +13,7 @@ import EditCategoryPage from "../Categories/EditCategoryPage";
 
 
 function App() {
+
   return (
       <BrowserRouter>
         <Routes>
@@ -27,10 +27,6 @@ function App() {
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/add-category" element={<AddCategoryPage />} />
             <Route path="/categories/:id" element={<EditCategoryPage />} />
-
-
-
-
         </Routes>
       </BrowserRouter>
   );

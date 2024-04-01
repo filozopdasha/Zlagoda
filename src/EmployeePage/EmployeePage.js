@@ -1,61 +1,51 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import './EmployeePageStyles.css';
 import MenuBar from "../MenuBar/MenuBar";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const EmployeePage = () => {
-    const navigate = useNavigate();
 
     const [fetchError, setFetchError] = useState(null);
     const [employee, setEmployee] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [sortBy, setSortBy] = useState("id_employee");
-    const [sortOrder, setSortOrder] = useState("asc");
+    const [sortOrder, setSortOrder] = useState("ASC");
     const [showPopup, setShowPopup] = useState(false);
     const [popupEmployee, setPopupEmployee] = useState(null);
     const [showCashiers, setShowCashiers] = useState(false);
 
     useEffect(() => {
         const fetchEmployee = async () => {
-            let query = supabase.from('Employee').select();
-            if (sortBy) query = query.order(sortBy, { ascending: sortOrder === "asc" });
-            const { data, error } = await query;
-            if (error) {
-                setFetchError('Could not fetch the employees');
-                setEmployee(null);
-                console.log(error);
-            }
-            if (data) {
-                console.log(data);
+            try {
+                const response = await fetch(`http://localhost:8081/get-employees?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch employees');
+                }
+                const data = await response.json();
                 setEmployee(data);
                 setFetchError(null);
-                console.log(data);
+            } catch (error) {
+                setFetchError(error.message);
+                setEmployee(null);
             }
         };
-
         fetchEmployee();
     }, [sortBy, sortOrder, showCashiers]);
 
+
     const handleDeleteEmployee = async (employeeId) => {
-        const {data, error} = await supabase
-            .from("Employee")
-            .delete()
-            .eq('id_employee', employeeId)
-            .select();
-
-        if(error){
-            console.log(error);
-        }
-        if(data){
-            console.log(data);
-            setEmployee(prevEmployee => {
-                return prevEmployee.filter(pr => pr.id_employee !== employeeId);
+        try {
+            const response = await fetch(`http://localhost:8081/delete-employee/${employeeId}`, {
+                method: 'DELETE',
+                mode:'cors'
             });
+            if (!response.ok) {
+                throw new Error('Failed to delete employee');
+            }
+            setEmployee(prevEmployees => prevEmployees.filter(emp => emp.id_employee !== employeeId));
+        } catch (error) {
+            console.error('Error deleting employee:', error.message);
         }
-    };
-
-    const handleEditEmployee = async (employeeId) => {
     };
 
     const handleSearch = (e) => {
@@ -65,26 +55,19 @@ const EmployeePage = () => {
 
     const handleSort = (columnName) => {
         if (sortBy === columnName) {
-            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+            setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
         } else {
             setSortBy(columnName);
-            setSortOrder("asc");
+            setSortOrder("ASC");
         }
     };
 
     const handlePopup = async (employeeId) => {
         setShowPopup(true);
-        const { data, error } = await supabase
-            .from('Employee')
-            .select('*')
-            .eq('id_employee', employeeId)
-            .single();
-        if (error) {
-            console.error('Error fetching employee details:', error.message);
-            return;
-        }
-        setPopupEmployee(data);
+        let popup = employee ? employee.find(employee => employee.id_employee === employeeId) : null;
+        setPopupEmployee(popup);
     };
+
 
     const handleClosePopup = () => {
         setShowPopup(false);
