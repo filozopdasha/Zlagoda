@@ -11,7 +11,7 @@
 28612||-9223372036854775808|T|G
 28612||10|T|G
 28612||16595|T|G</Grants>
-      <IntrospectionStateNumber>2317</IntrospectionStateNumber>
+      <IntrospectionStateNumber>2362</IntrospectionStateNumber>
       <ServerVersion>15.1</ServerVersion>
       <StartupTime>1710332864</StartupTime>
       <TimeZones>true ACDT
@@ -1492,82 +1492,19 @@ true posixrules
 28921||16732|C|G
 28921||16420|U|G
 28921||16732|U|G</Grants>
-      <IntrospectionStateNumber>2317</IntrospectionStateNumber>
+      <IntrospectionStateNumber>2362</IntrospectionStateNumber>
       <ObjectId>28612</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
-    <role id="3" parent="1" name="pg_database_owner">
-      <ObjectId>6171</ObjectId>
+    <role id="3" parent="1" name="anon">
+      <Config>statement_timeout=3s</Config>
+      <ObjectId>16478</ObjectId>
     </role>
-    <role id="4" parent="1" name="pg_read_all_data">
-      <ObjectId>6181</ObjectId>
+    <role id="4" parent="1" name="authenticated">
+      <Config>statement_timeout=8s</Config>
+      <ObjectId>16479</ObjectId>
     </role>
-    <role id="5" parent="1" name="pg_write_all_data">
-      <ObjectId>6182</ObjectId>
-    </role>
-    <role id="6" parent="1" name="pg_monitor">
-      <ObjectId>3373</ObjectId>
-      <RoleGrants>3374
-3375
-3377</RoleGrants>
-    </role>
-    <role id="7" parent="1" name="pg_read_all_settings">
-      <ObjectId>3374</ObjectId>
-    </role>
-    <role id="8" parent="1" name="pg_read_all_stats">
-      <ObjectId>3375</ObjectId>
-    </role>
-    <role id="9" parent="1" name="pg_stat_scan_tables">
-      <ObjectId>3377</ObjectId>
-    </role>
-    <role id="10" parent="1" name="pg_read_server_files">
-      <ObjectId>4569</ObjectId>
-    </role>
-    <role id="11" parent="1" name="pg_write_server_files">
-      <ObjectId>4570</ObjectId>
-    </role>
-    <role id="12" parent="1" name="pg_execute_server_program">
-      <ObjectId>4571</ObjectId>
-    </role>
-    <role id="13" parent="1" name="pg_signal_backend">
-      <ObjectId>4200</ObjectId>
-    </role>
-    <role id="14" parent="1" name="pg_checkpoint">
-      <ObjectId>4544</ObjectId>
-    </role>
-    <role id="15" parent="1" name="pgsodium_keyiduser">
-      <ObjectId>16732</ObjectId>
-    </role>
-    <role id="16" parent="1" name="pgsodium_keymaker">
-      <ObjectId>16734</ObjectId>
-      <RoleGrants>16732
-16733</RoleGrants>
-    </role>
-    <role id="17" parent="1" name="supabase_admin">
-      <BypassRls>1</BypassRls>
-      <CanLogin>1</CanLogin>
-      <Config>search_path=&quot;$user&quot;, public, auth, extensions</Config>
-      <CreateDb>1</CreateDb>
-      <CreateRole>1</CreateRole>
-      <ObjectId>16420</ObjectId>
-      <Replication>1</Replication>
-      <SuperRole>1</SuperRole>
-    </role>
-    <role id="18" parent="1" name="supabase_auth_admin">
-      <CanLogin>1</CanLogin>
-      <Config>search_path=auth
-idle_in_transaction_session_timeout=60000</Config>
-      <CreateRole>1</CreateRole>
-      <Inherit>0</Inherit>
-      <ObjectId>16535</ObjectId>
-    </role>
-    <role id="19" parent="1" name="supabase_read_only_user">
-      <BypassRls>1</BypassRls>
-      <CanLogin>1</CanLogin>
-      <ObjectId>16422</ObjectId>
-      <RoleGrants>6181</RoleGrants>
-    </role>
-    <role id="20" parent="1" name="authenticator">
+    <role id="5" parent="1" name="authenticator">
       <CanLogin>1</CanLogin>
       <Config>session_preload_libraries=safeupdate
 statement_timeout=8s
@@ -1578,34 +1515,68 @@ lock_timeout=8s</Config>
 16479
 16480</RoleGrants>
     </role>
-    <role id="21" parent="1" name="dashboard_user">
+    <role id="6" parent="1" name="dashboard_user">
       <CreateDb>1</CreateDb>
       <CreateRole>1</CreateRole>
       <ObjectId>16595</ObjectId>
       <Replication>1</Replication>
     </role>
-    <role id="22" parent="1" name="pgbouncer">
+    <role id="7" parent="1" name="pg_checkpoint">
+      <ObjectId>4544</ObjectId>
+    </role>
+    <role id="8" parent="1" name="pg_database_owner">
+      <ObjectId>6171</ObjectId>
+    </role>
+    <role id="9" parent="1" name="pg_execute_server_program">
+      <ObjectId>4571</ObjectId>
+    </role>
+    <role id="10" parent="1" name="pg_monitor">
+      <ObjectId>3373</ObjectId>
+      <RoleGrants>3374
+3375
+3377</RoleGrants>
+    </role>
+    <role id="11" parent="1" name="pg_read_all_data">
+      <ObjectId>6181</ObjectId>
+    </role>
+    <role id="12" parent="1" name="pg_read_all_settings">
+      <ObjectId>3374</ObjectId>
+    </role>
+    <role id="13" parent="1" name="pg_read_all_stats">
+      <ObjectId>3375</ObjectId>
+    </role>
+    <role id="14" parent="1" name="pg_read_server_files">
+      <ObjectId>4569</ObjectId>
+    </role>
+    <role id="15" parent="1" name="pg_signal_backend">
+      <ObjectId>4200</ObjectId>
+    </role>
+    <role id="16" parent="1" name="pg_stat_scan_tables">
+      <ObjectId>3377</ObjectId>
+    </role>
+    <role id="17" parent="1" name="pg_write_all_data">
+      <ObjectId>6182</ObjectId>
+    </role>
+    <role id="18" parent="1" name="pg_write_server_files">
+      <ObjectId>4570</ObjectId>
+    </role>
+    <role id="19" parent="1" name="pgbouncer">
       <CanLogin>1</CanLogin>
       <ObjectId>16384</ObjectId>
     </role>
-    <role id="23" parent="1" name="pgsodium_keyholder">
+    <role id="20" parent="1" name="pgsodium_keyholder">
       <ObjectId>16733</ObjectId>
       <RoleGrants>16732</RoleGrants>
     </role>
-    <role id="24" parent="1" name="supabase_replication_admin">
-      <CanLogin>1</CanLogin>
-      <ObjectId>16421</ObjectId>
-      <Replication>1</Replication>
+    <role id="21" parent="1" name="pgsodium_keyiduser">
+      <ObjectId>16732</ObjectId>
     </role>
-    <role id="25" parent="1" name="supabase_storage_admin">
-      <CanLogin>1</CanLogin>
-      <Config>search_path=storage</Config>
-      <CreateRole>1</CreateRole>
-      <Inherit>0</Inherit>
-      <ObjectId>16590</ObjectId>
-      <RoleGrants>16481</RoleGrants>
+    <role id="22" parent="1" name="pgsodium_keymaker">
+      <ObjectId>16734</ObjectId>
+      <RoleGrants>16732
+16733</RoleGrants>
     </role>
-    <role id="26" parent="1" name="postgres">
+    <role id="23" parent="1" name="postgres">
       <BypassRls>1</BypassRls>
       <CanLogin>1</CanLogin>
       <Config>search_path=&quot;\\$user&quot;, public, extensions</Config>
@@ -1623,18 +1594,47 @@ lock_timeout=8s</Config>
 16734!
 3373</RoleGrants>
     </role>
-    <role id="27" parent="1" name="authenticated">
-      <Config>statement_timeout=8s</Config>
-      <ObjectId>16479</ObjectId>
-    </role>
-    <role id="28" parent="1" name="anon">
-      <Config>statement_timeout=3s</Config>
-      <ObjectId>16478</ObjectId>
-    </role>
-    <role id="29" parent="1" name="service_role">
+    <role id="24" parent="1" name="service_role">
       <BypassRls>1</BypassRls>
       <ObjectId>16480</ObjectId>
       <RoleGrants>16733</RoleGrants>
+    </role>
+    <role id="25" parent="1" name="supabase_admin">
+      <BypassRls>1</BypassRls>
+      <CanLogin>1</CanLogin>
+      <Config>search_path=&quot;$user&quot;, public, auth, extensions</Config>
+      <CreateDb>1</CreateDb>
+      <CreateRole>1</CreateRole>
+      <ObjectId>16420</ObjectId>
+      <Replication>1</Replication>
+      <SuperRole>1</SuperRole>
+    </role>
+    <role id="26" parent="1" name="supabase_auth_admin">
+      <CanLogin>1</CanLogin>
+      <Config>search_path=auth
+idle_in_transaction_session_timeout=60000</Config>
+      <CreateRole>1</CreateRole>
+      <Inherit>0</Inherit>
+      <ObjectId>16535</ObjectId>
+    </role>
+    <role id="27" parent="1" name="supabase_read_only_user">
+      <BypassRls>1</BypassRls>
+      <CanLogin>1</CanLogin>
+      <ObjectId>16422</ObjectId>
+      <RoleGrants>6181</RoleGrants>
+    </role>
+    <role id="28" parent="1" name="supabase_replication_admin">
+      <CanLogin>1</CanLogin>
+      <ObjectId>16421</ObjectId>
+      <Replication>1</Replication>
+    </role>
+    <role id="29" parent="1" name="supabase_storage_admin">
+      <CanLogin>1</CanLogin>
+      <Config>search_path=storage</Config>
+      <CreateRole>1</CreateRole>
+      <Inherit>0</Inherit>
+      <ObjectId>16590</ObjectId>
+      <RoleGrants>16481</RoleGrants>
     </role>
     <tablespace id="30" parent="1" name="pg_default">
       <ObjectId>1663</ObjectId>
@@ -5558,8 +5558,8 @@ lock_timeout=8s</Config>
 30433||16478|w|G
 30433||16479|w|G
 30433||16480|w|G</Grants>
-      <IntrospectionStateNumber>2317</IntrospectionStateNumber>
-      <LastIntrospectionLocalTimestamp>2024-04-01.12:10:33</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>2362</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2024-04-01.19:46:33</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>1295</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
@@ -5697,7 +5697,7 @@ SECURITY LABEL</Tags>
     </sequence>
     <table id="308" parent="289" name="Category">
       <ObjectId>30374</ObjectId>
-      <StateNumber>2284</StateNumber>
+      <StateNumber>2342</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
@@ -5721,7 +5721,7 @@ SECURITY LABEL</Tags>
     </table>
     <table id="312" parent="289" name="Product">
       <ObjectId>30381</ObjectId>
-      <StateNumber>2284</StateNumber>
+      <StateNumber>2356</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
@@ -5759,10 +5759,9 @@ SECURITY LABEL</Tags>
     </argument>
     <column id="320" parent="308" name="category_number">
       <DasType>integer|0s</DasType>
-      <DefaultExpression>nextval(&apos;&quot;Category_category_number_seq&quot;&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
-      <StateNumber>2284</StateNumber>
+      <StateNumber>2343</StateNumber>
       <SequenceId>30373</SequenceId>
       <TypeId>23</TypeId>
     </column>
@@ -6119,16 +6118,22 @@ sum_total</ColNames>
       <StateNumber>2284</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <foreign-key id="369" parent="312" name="Product_category_number_fkey">
+    <column id="369" parent="312" name="manufacturer">
+      <DasType>varchar|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StateNumber>2356</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <foreign-key id="370" parent="312" name="public_Product_category_number_fkey">
       <ColNames>category_number</ColNames>
-      <NameSurrogate>1</NameSurrogate>
-      <ObjectId>30387</ObjectId>
-      <OnDelete>cascade</OnDelete>
-      <StateNumber>2284</StateNumber>
+      <ObjectId>30516</ObjectId>
+      <OnUpdate>cascade</OnUpdate>
+      <StateNumber>2345</StateNumber>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>30374</RefTableId>
     </foreign-key>
-    <index id="370" parent="312" name="Product_pkey">
+    <index id="371" parent="312" name="Product_pkey">
       <ColNames>id_product</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30385</ObjectId>
@@ -6137,42 +6142,42 @@ sum_total</ColNames>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="371" parent="312" name="Product_pkey">
+    <key id="372" parent="312" name="Product_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30386</ObjectId>
       <Primary>1</Primary>
       <StateNumber>2284</StateNumber>
       <UnderlyingIndexId>30385</UnderlyingIndexId>
     </key>
-    <column id="372" parent="313" name="upc">
+    <column id="373" parent="313" name="upc">
       <DasType>varchar(12)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="373" parent="313" name="check_number">
+    <column id="374" parent="313" name="check_number">
       <DasType>varchar(10)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="374" parent="313" name="product_number">
+    <column id="375" parent="313" name="product_number">
       <DasType>integer|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="375" parent="313" name="selling_price">
+    <column id="376" parent="313" name="selling_price">
       <DasType>numeric(13,4 digit)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>1700</TypeId>
     </column>
-    <foreign-key id="376" parent="313" name="Sale_upc_fkey">
+    <foreign-key id="377" parent="313" name="Sale_upc_fkey">
       <ColNames>upc</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30438</ObjectId>
@@ -6181,7 +6186,7 @@ sum_total</ColNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>30392</RefTableId>
     </foreign-key>
-    <foreign-key id="377" parent="313" name="Sale_check_number_fkey">
+    <foreign-key id="378" parent="313" name="Sale_check_number_fkey">
       <ColNames>check_number</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30443</ObjectId>
@@ -6190,7 +6195,7 @@ sum_total</ColNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>30415</RefTableId>
     </foreign-key>
-    <index id="378" parent="313" name="Sale_pkey">
+    <index id="379" parent="313" name="Sale_pkey">
       <ColNames>upc
 check_number</ColNames>
       <NameSurrogate>1</NameSurrogate>
@@ -6206,67 +6211,67 @@ default</CollationNames>
       <CollationParentNames>pg_catalog
 pg_catalog</CollationParentNames>
     </index>
-    <key id="379" parent="313" name="Sale_pkey">
+    <key id="380" parent="313" name="Sale_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30437</ObjectId>
       <Primary>1</Primary>
       <StateNumber>2284</StateNumber>
       <UnderlyingIndexId>30436</UnderlyingIndexId>
     </key>
-    <check id="380" parent="314" name="Store_Product_products_number_check">
+    <check id="381" parent="314" name="Store_Product_products_number_check">
       <ColNames>products_number</ColNames>
       <ObjectId>30396</ObjectId>
       <Predicate>products_number &gt;= 0</Predicate>
       <StateNumber>2284</StateNumber>
     </check>
-    <check id="381" parent="314" name="Store_Product_selling_price_check">
+    <check id="382" parent="314" name="Store_Product_selling_price_check">
       <ColNames>selling_price</ColNames>
       <ObjectId>30395</ObjectId>
       <Predicate>selling_price &gt; (0)::numeric</Predicate>
       <StateNumber>2284</StateNumber>
     </check>
-    <column id="382" parent="314" name="upc">
+    <column id="383" parent="314" name="upc">
       <DasType>varchar(12)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="383" parent="314" name="upc_prom">
+    <column id="384" parent="314" name="upc_prom">
       <DasType>varchar(12)|0s</DasType>
       <Position>2</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="384" parent="314" name="id_product">
+    <column id="385" parent="314" name="id_product">
       <DasType>integer|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="385" parent="314" name="selling_price">
+    <column id="386" parent="314" name="selling_price">
       <DasType>numeric(13,4 digit)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>1700</TypeId>
     </column>
-    <column id="386" parent="314" name="products_number">
+    <column id="387" parent="314" name="products_number">
       <DasType>integer|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="387" parent="314" name="promotional_product">
+    <column id="388" parent="314" name="promotional_product">
       <DasType>boolean|0s</DasType>
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StateNumber>2284</StateNumber>
       <TypeId>16</TypeId>
     </column>
-    <foreign-key id="388" parent="314" name="Store_Product_upc_prom_fkey">
+    <foreign-key id="389" parent="314" name="Store_Product_upc_prom_fkey">
       <ColNames>upc_prom</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30399</ObjectId>
@@ -6275,7 +6280,7 @@ pg_catalog</CollationParentNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>30392</RefTableId>
     </foreign-key>
-    <foreign-key id="389" parent="314" name="Store_Product_id_product_fkey">
+    <foreign-key id="390" parent="314" name="Store_Product_id_product_fkey">
       <ColNames>id_product</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30404</ObjectId>
@@ -6284,7 +6289,7 @@ pg_catalog</CollationParentNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>30381</RefTableId>
     </foreign-key>
-    <index id="390" parent="314" name="Store_Product_pkey">
+    <index id="391" parent="314" name="Store_Product_pkey">
       <ColNames>upc</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30397</ObjectId>
@@ -6296,7 +6301,7 @@ pg_catalog</CollationParentNames>
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="391" parent="314" name="Store_Product_pkey">
+    <key id="392" parent="314" name="Store_Product_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>30398</ObjectId>
       <Primary>1</Primary>

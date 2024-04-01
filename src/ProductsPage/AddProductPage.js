@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import './AddProductPageStyles.css';
 
@@ -17,43 +16,44 @@ const AddProductPage = () => {
     const [formError, setFormError] = useState('');
 
     useEffect(() => {
-        const fetchCategory = async () => {
-            let query = supabase.from('Category').select();
-            const { data, error } = await query;
-            if (error) {
-                setFetchError('Could not fetch the categories');
-                setCategoryArray(null);
-                console.log(error);
-            }
-            if (data) {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch(`http://localhost:8081/get-category?sortBy=${"category_number"}&sortOrder=${"ASC"}`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch the categories');
+                }
+                const data = await response.json();
                 setCategoryArray(data);
                 setFetchError(null);
                 console.log(data);
+            } catch (error) {
+                setFetchError(error.message);
+                setCategoryArray(null);
+                console.error(error);
             }
         };
 
-        fetchCategory();
+        fetchCategories();
     }, []);
 
     useEffect(() => {
         const fetchMaxId = async () => {
-            const { data, error } = await supabase
-                .from('Product')
-                .select('id_product', { count: 'exact' })
-                .order('id_product', { ascending: false })
-                .limit(1);
-
-            if (error) {
+            try {
+                const response = await fetch('http://localhost:8081/get-products-id');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch maximum product ID');
+                }
+                const data = await response.json();
+                const maxId = Math.max(...data.map(item => item.id_product), 0);
+                setId(maxId + 1);
+            } catch (error) {
                 console.error('Error fetching max id:', error.message);
-                return;
             }
-
-            const maxId = data.length > 0 ? data[0].id_product : 0;
-            setId(maxId + 1);
         };
 
         fetchMaxId();
     }, []);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -63,19 +63,33 @@ const AddProductPage = () => {
             return;
         }
 
-        const { data, error } = await supabase
-            .from("Product")
-            .insert([{ id_product:id, category_number:category, product_name:prodName, characteristics:characteristics, manufacturer:manufacturer }]);
+        try {
+            const response = await fetch('http://localhost:8081/add-product', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_product: id,
+                    category_number: category,
+                    product_name: prodName,
+                    characteristics: characteristics,
+                    manufacturer: manufacturer
+                }),
+            });
 
-        if (error) {
-            console.error('Error inserting product:', error.message);
+            if (!response.ok) {
+                throw new Error('Failed to add product');
+            }
+
+            navigate('/products');
+            console.log('Product added successfully');
+        } catch (error) {
+            console.error('Error adding product:', error.message);
             setFormError("An error occurred while adding the product. Please try again.");
-            return;
         }
-
-        navigate('/products')
-        console.log('Product added successfully:', data);
     };
+
 
     const handleCancel = () => {
         navigate('/products');

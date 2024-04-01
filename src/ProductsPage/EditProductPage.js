@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import { useNavigate, useParams } from "react-router-dom";
 import './AddProductPageStyles.css';
 
@@ -17,47 +16,54 @@ const EditProductPage = () => {
     const [formError, setFormError] = useState('');
 
     useEffect(() => {
-        const fetchCategory = async () => {
-            let query = supabase.from('Category').select();
-            const { data, error } = await query;
-            if (error) {
-                setFetchError('Could not fetch the categories');
-                setCategoryArray(null);
-                console.log(error);
-            }
-            if (data) {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch(`http://localhost:8081/get-category?sortBy=${"category_number"}&sortOrder=${"ASC"}`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch the categories');
+                }
+                const data = await response.json();
                 setCategoryArray(data);
                 setFetchError(null);
                 console.log(data);
+            } catch (error) {
+                setFetchError(error.message);
+                setCategoryArray(null);
+                console.error(error);
             }
         };
 
-        fetchCategory();
+        fetchCategories();
     }, []);
+
 
     useEffect(() => {
         const fetchProduct = async () => {
-            const { data, error } = await supabase
-                .from('Product')
-                .select('*')
-                .eq('id_product', id)
-                .single();
+            try {
+                const response = await fetch(`http://localhost:8081/get-single-product/${id}`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch product');
+                }
+                const data = await response.json();
 
-            if (error) {
+                if (data.length === 0) {
+                    console.error('Product not found');
+                    return;
+                }
+
+                const product = data[0];
+                setCategory(product.category_number);
+                setName(product.product_name);
+                setCharacteristics(product.characteristics);
+                setManufacturer(product.manufacturer);
+            } catch (error) {
                 console.error('Error fetching product:', error.message);
-                return;
-            }
-
-            if (data) {
-                setCategory(data.category_number);
-                setName(data.product_name);
-                setCharacteristics(data.characteristics);
-                setManufacturer(data.manufacturer);
             }
         };
 
         fetchProduct();
     }, [id]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,26 +73,32 @@ const EditProductPage = () => {
             return;
         }
 
-        const { data, error } = await supabase
-            .from("Product")
-            .update({
-                id_product: id,
-                category_number: category,
-                product_name: prodName,
-                characteristics: characteristics,
-                manufacturer: manufacturer
-            })
-            .eq('id_product', id);
+        try {
+            const response = await fetch(`http://localhost:8081/update-product/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    category_number: category,
+                    product_name: prodName,
+                    characteristics: characteristics,
+                    manufacturer: manufacturer
+                }),
+            });
 
-        if (error) {
+            if (!response.ok) {
+                throw new Error('Failed to update product');
+            }
+
+            navigate('/products');
+            console.log('Product updated successfully');
+        } catch (error) {
             console.error('Error updating product:', error.message);
             setFormError("An error occurred while updating the product. Please try again.");
-            return;
         }
-
-        navigate('/products');
-        console.log('Product updated successfully:', data);
     };
+
 
     const handleCancel = () => {
         navigate('/products');

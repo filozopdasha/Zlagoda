@@ -27,6 +27,9 @@ methods
 * *
  */
 
+/**
+ * EMPLOYEES************************************************************************************************************
+ */
 app.get('/get-employees', (req, res) =>{
     const { sortBy, sortOrder } = req.query;
     const orderBy = `${sortBy} ${sortOrder}`;
@@ -38,7 +41,6 @@ app.get('/get-employees', (req, res) =>{
             res.status(500).json({error:error.message});
         });
 });
-
 app.get('/get-single-employee/:id', (req, res) =>{
     const employeeId = req.params.id;
     db.any('SELECT * FROM "Employee" WHERE id_employee = $1;', [employeeId])
@@ -49,7 +51,6 @@ app.get('/get-single-employee/:id', (req, res) =>{
             res.status(500).json({error:error.message});
         });
 });
-
 app.delete('/delete-employee/:id', (req, res) => {
     const employeeId = req.params.id;
     db.any('DELETE FROM "Employee" WHERE id_employee = $1;', [employeeId])
@@ -60,7 +61,6 @@ app.delete('/delete-employee/:id', (req, res) => {
             res.status(500).json({ error: error.message });
         });
 });
-
 app.put('/update-employee/:id', (req, res) => {
     const employeeId = req.params.id;
     const { empl_name, empl_surname, empl_patronymic, empl_role, salary, date_of_birth, date_of_start, phone_number, city, street, zip_code } = req.body;
@@ -74,7 +74,6 @@ app.put('/update-employee/:id', (req, res) => {
             res.status(500).json({ error: error.message });
         });
 });
-
 app.get('/get-max-employee-id', (req, res) => {
     db.one('SELECT MAX(id_employee) AS maxId FROM "Employee";')
         .then((result) => {
@@ -99,11 +98,9 @@ app.post('/add-employee', async (req, res) => {
     }
 });
 
-
-
-
-
-
+/**
+ * CATEGORIES***********************************************************************************************************
+ */
 app.get('/get-category', (req, res) =>{
     const { sortBy, sortOrder } = req.query;
     const orderBy = `${sortBy} ${sortOrder}`;
@@ -115,7 +112,6 @@ app.get('/get-category', (req, res) =>{
             res.status(500).json({error:error.message});
         });
 });
-
 app.get('/get-single-category/:id', (req, res) =>{
     const categoryNumber = req.params.id;
     db.any('SELECT * FROM "Category" WHERE category_number = $1;', [categoryNumber])
@@ -126,7 +122,6 @@ app.get('/get-single-category/:id', (req, res) =>{
             res.status(500).json({error:error.message});
         });
 });
-
 app.delete('/delete-category/:id', (req, res) => {
     const categoryNumber = req.params.id;
     db.any('DELETE FROM "Category" WHERE category_number = $1;', [categoryNumber])
@@ -137,7 +132,6 @@ app.delete('/delete-category/:id', (req, res) => {
             res.status(500).json({ error: error.message });
         });
 });
-
 app.put('/update-category/:id', (req, res) => {
     const categoryNumber = req.params.id;
     const { category_number, category_name } = req.body;
@@ -150,8 +144,6 @@ app.put('/update-category/:id', (req, res) => {
             res.status(500).json({ error: error.message });
         });
 });
-
-
 app.post('/add-category', async (req, res) => {
     try {
         const { category_number, category_name } = req.body;
@@ -163,7 +155,6 @@ app.post('/add-category', async (req, res) => {
         res.status(500).json({ error: 'Error adding category: ' + error.message });
     }
 });
-
 app.get('/get-max-category-number', (req, res) => {
     db.any('SELECT category_number FROM "Category";')
         .then((result) => {
@@ -174,11 +165,6 @@ app.get('/get-max-category-number', (req, res) => {
             res.status(500).json({ error: 'Error fetching max category number' });
         });
 });
-
-
-
-
-
 app.get('/get-products/:categoryNumber', (req, res) =>{
     const { sortBy, sortOrder } = req.query;
     const { categoryNumber } = req.params;
@@ -192,8 +178,74 @@ app.get('/get-products/:categoryNumber', (req, res) =>{
         });
 });
 
+/**
+ * PRODUCTS*************************************************************************************************************
+ */
+app.get('/get-products', (req, res) =>{
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT * FROM "Product" ORDER BY ${orderBy};`)
+        .then(result =>{
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({error:error.message});
+        });
+});
+app.get('/get-single-product/:id', (req, res) =>{
+    const idProd = req.params.id;
+    db.any('SELECT * FROM "Product" WHERE id_product = $1;', [idProd])
+        .then(result =>{
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({error:error.message});
+        });
+});
+app.delete('/delete-product/:id', (req, res) => {
+    const idProd = req.params.id;
+    db.any('DELETE FROM "Product" WHERE id_product = $1;', [idProd])
+        .then(result => {
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.put('/update-product/:id', (req, res) => {
+    const productId = req.params.id;
+    const { category_number, product_name, characteristics, manufacturer } = req.body;
 
+    db.none('UPDATE "Product" SET category_number = $1, product_name = $2, characteristics = $3, manufacturer = $4 WHERE id_product = $5;',
+        [category_number, product_name, characteristics, manufacturer, productId])
+        .then(() => {
+            res.json({ message: 'Product updated successfully' });
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.post('/add-product', async (req, res) => {
+    try {
+        const { id_product, category_number, product_name, characteristics, manufacturer } = req.body;
+        await db.none('INSERT INTO "Product" (id_product, category_number, product_name, characteristics, manufacturer) VALUES ($1, $2, $3, $4, $5);',
+            [id_product, category_number, product_name, characteristics, manufacturer]);
 
+        res.json({ message: 'Product added successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error adding product: ' + error.message });
+    }
+});
+app.get('/get-products-id', (req, res) => {
+    db.any('SELECT id_product FROM "Product";')
+        .then((result) => {
+            res.json(result);
+        })
+        .catch(error => {
+            console.error('Error fetching ids:', error.message);
+            res.status(500).json({ error: 'Error fetching ids' });
+        });
+});
 
 /*
 * *

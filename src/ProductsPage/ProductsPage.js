@@ -15,18 +15,17 @@ const ProductsPage = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            let query = supabase.from('Product').select();
-            if (sortBy) query = query.order(sortBy, { ascending: sortOrder === "asc" });
-            const { data, error } = await query;
-            if (error) {
-                setFetchError('Could not fetch the products');
-                setProducts(null);
-                console.log(error);
-            }
-            if (data) {
+            try {
+                const response = await fetch(`http://localhost:8081/get-products?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch the products');
+                }
+                const data = await response.json();
                 setProducts(data);
                 setFetchError(null);
-                console.log(data);
+            } catch (error) {
+                setFetchError(error.message);
+                setProducts(null);
             }
         };
 
@@ -34,25 +33,17 @@ const ProductsPage = () => {
     }, [sortBy, sortOrder]);
 
     const handleDeleteProduct = async (productId) => {
-        const {data, error} = await supabase
-            .from("Product")
-            .delete()
-            .eq('id_product', productId)
-            .select()
-
-        if(error){
-            console.log(error)
+        try {
+            const response = await fetch(`http://localhost:8081/delete-product/${productId}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete product');
+            }
+            setProducts(prevProducts => prevProducts.filter(product => product.id_product !== productId));
+        } catch (error) {
+            console.error('Error deleting product:', error.message);
         }
-        if(data){
-            console.log(data)
-            setProducts(prevRroducts =>{
-                return prevRroducts.filter(pr => pr.id_product !== productId)
-            })
-        }
-
-    };
-
-    const handleEditProduct = async (productId) => {
     };
 
     const handleSearch = (e) => {
@@ -62,10 +53,10 @@ const ProductsPage = () => {
 
     const handleSort = (columnName) => {
         if (sortBy === columnName) {
-            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+            setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
         } else {
             setSortBy(columnName);
-            setSortOrder("asc");
+            setSortOrder("ASC");
         }
     };
 
