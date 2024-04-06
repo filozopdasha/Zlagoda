@@ -17,6 +17,9 @@ const MenuBar = () => {
                         <NavLink to="/categories" className="nav-link" activeClassName="active">Categories</NavLink>
                     </li>
                     <li className="nav-item">
+                        <NavLink to="/cards" className="nav-link" activeClassName="active">Customer Cards</NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink to="/employees" className="nav-link" activeClassName="active">Employees</NavLink>
                     </li>
                     <li className="nav-item">

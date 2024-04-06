@@ -378,6 +378,93 @@ app.get('/get-customer-cards', async (req, res) => {
     }
 });
 
+/**
+ * CUSTOMER CARDS***********************************************************************************************************
+ */
+app.get('/get-card', (req, res) =>{
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT * FROM "Customer_Card" ORDER BY ${orderBy};`)
+        .then(result =>{
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({error:error.message});
+        });
+});
+app.get('/get-single-card/:id', (req, res) =>{
+    const cardNumber = req.params.id;
+    db.any('SELECT * FROM "Customer_Card" WHERE card_number = $1;', [cardNumber])
+        .then(result =>{
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({error:error.message});
+        });
+});
+app.delete('/delete-card/:id', (req, res) => {
+    const cardNumber = req.params.id;
+    db.any('DELETE FROM "Customer_Card" WHERE card_number = $1;', [cardNumber])
+        .then(result => {
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.put('/update-card/:id', (req, res) => {
+    const cardId = req.params.id;
+    const { card_number, cust_surname, cust_name, cust_patronymic, phone_number, city, street, zip_code, percent } = req.body;
+    db.none('UPDATE "Customer_Card" SET card_number = $1, cust_surname = $2, cust_name = $3, cust_patronymic = $4, phone_number = $5, city = $6, street = $7, zip_code = $8, percent = $9 WHERE card_number = $10;',
+        [card_number, cust_surname, cust_name, cust_patronymic, phone_number, city, street, zip_code, percent, cardId]) // Changed cardNumber to cardId
+        .then(() => {
+            res.json({ message: 'Card updated successfully' });
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+app.post('/add-card', async (req, res) => {
+    try {
+        console.log('Received request to add a new card:', req.body);
+
+        const { card_number, cust_surname, cust_name, cust_patronymic, phone_number, city, street, zip_code, percent } = req.body;
+        console.log('Inserting card into database...');
+
+        await db.none('INSERT INTO "Customer_Card" (card_number, cust_surname, cust_name, cust_patronymic, phone_number, city, street, zip_code, percent) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+            [card_number, cust_surname, cust_name, cust_patronymic, phone_number, city, street, zip_code, percent]);
+
+        console.log('Card added successfully');
+        res.json({ message: 'Card added successfully' });
+    } catch (error) {
+        console.error('Error adding card:', error.message);
+        res.status(500).json({ error: 'An error occurred while adding a new customer card. Please try again.' });
+    }
+});
+
+app.get('/get-max-card-number', (req, res) => {
+    db.any('SELECT card_number FROM "Customer_Card";')
+        .then((result) => {
+            res.json(result);
+        })
+        .catch(error => {
+            console.error('Error fetching max card number:', error.message);
+            res.status(500).json({ error: 'Error fetching max card number' });
+        });
+});
+app.get('/get-card-info/:id', (req, res) =>{
+    const  cardNumber  = req.params.id;
+    db.one(`SELECT * FROM "Customer_Card" WHERE card_number = $1;`, [cardNumber])
+        .then(result =>{
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({error:error.message});
+        });
+});
+
+
 
 /*
 * *
@@ -398,4 +485,3 @@ const PORT = 8081
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-

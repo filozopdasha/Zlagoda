@@ -12,6 +12,9 @@ import AddCategoryPage from "../Categories/AddCategoryPage";
 import EditCategoryPage from "../Categories/EditCategoryPage";
 import CheckPage from "../CheckPage/CheckPage";
 import AddCheckAndSalePage from "../CheckPage/AddCheckPage";
+import CustomerCardPage from "../CustomerCard/CustomerCardPage";
+import AddCustomerCardPage from "../CustomerCard/AddCustomerCardPage";
+import EditCustomerCardPage from "../CustomerCard/EditCustomerCardPage";
 
 
 function App() {
@@ -29,6 +32,9 @@ function App() {
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/add-category" element={<AddCategoryPage />} />
             <Route path="/categories/:id" element={<EditCategoryPage />} />
+            <Route path="/cards" element={<CustomerCardPage />} />
+            <Route path="/add-card" element={<AddCustomerCardPage />} />
+            <Route path="/card/:id" element={<EditCustomerCardPage />} />
             <Route path="/checks" element={<CheckPage />} />
             <Route path="/add-check" element={<AddCheckAndSalePage />} />
         </Routes>
