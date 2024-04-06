@@ -247,6 +247,138 @@ app.get('/get-products-id', (req, res) => {
         });
 });
 
+/**
+ * CHECKS*************************************************************************************************************
+ */
+app.get('/get-checks', (req, res) =>{
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT * FROM "Check" ORDER BY ${orderBy};`)
+        .then(result =>{
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({error:error.message});
+        });
+});
+app.get('/get-sales/:id', (req, res) => {
+    const checkNum = req.params.id;
+    db.any('SELECT * FROM ((("Sale" INNER JOIN "Store_Product" ON "Sale".upc = "Store_Product".upc) INNER JOIN "Product" ON "Product".id_product = "Store_Product".id_product) INNER JOIN "Check" ON "Check".check_number = "Sale".check_number) LEFT JOIN "Customer_Card" ON "Customer_Card".card_number = "Check".card_number WHERE "Check".check_number = $1;', [checkNum])
+        .then(result => {
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+app.get('/get-checks-by-cashier-period', async (req, res) => {
+    const { cashierId, startDate, endDate, sortBy, sortOrder } = req.query; // Change parameter names to match frontend
+    const orderBy = `${sortBy} ${sortOrder}`;
+    try {
+        const query = `SELECT * FROM "Check" WHERE id_employee = $1 AND DATE(print_date) BETWEEN $2 AND $3 ORDER BY ${orderBy};`;
+        const checks = await db.any(query, [cashierId, startDate, endDate]);
+        res.json(checks);
+    } catch (error) {
+        console.error('Database Error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+app.get('/get-checks-by-cashier', async (req, res) => {
+    const { cashierId, sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    try {
+        const query = `SELECT * FROM "Check" WHERE id_employee = $1 ORDER BY ${orderBy};`;
+        const checks = await db.any(query, [cashierId]);
+        res.json(checks);
+    } catch (error) {
+        console.error('Database Error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+app.get('/get-checks-by-period', async (req, res) => {
+    const { startDate, endDate, sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    try {
+        const query = `SELECT * FROM "Check" WHERE print_date BETWEEN $1 AND $2 ORDER BY ${orderBy};`;
+        const checks = await db.any(query, [startDate, endDate]);
+        res.json(checks);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+app.delete('/delete-check/:id', (req, res) => {
+    const idCheck = req.params.id;
+    db.any('DELETE FROM "Check" WHERE check_number = $1;', [idCheck])
+        .then(result => {
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.post('/add-check', async (req, res) => {
+    try {
+        const { check_number, id_employee, card_number } = req.body;
+        const query = card_number ? 'INSERT INTO "Check" (check_number, id_employee, card_number) VALUES ($1, $2, $3);' :
+            'INSERT INTO "Check" (check_number, id_employee) VALUES ($1, $2);';
+
+        const params = card_number ? [check_number, id_employee, card_number] :
+            [check_number, id_employee];
+
+        await db.none(query, params);
+
+        res.json({ message: 'Check added successfully' });
+    } catch (error) {
+        console.error('Error adding check:', error.message); // Log error message
+        res.status(500).json({ error: 'Error adding check: ' + error.message });
+    }
+});
+app.post('/add-sale', async (req, res) => {
+    try {
+        const { check_number, UPC, product_number } = req.body;
+        await db.none('INSERT INTO "Sale" (check_number, upc, product_number) VALUES ($1, $2, $3);',
+            [check_number, UPC, product_number]);
+        res.json({ message: 'Sale added successfully' });
+    } catch (error) {
+        console.error('Error adding sale:', error.message); // Log error message
+        res.status(500).json({ error: 'Error adding sale: ' + error.message });
+    }
+});
+
+app.get('/get-max-check-number', async (req, res) => {
+    try {
+        const maxCheckNumber = await db.one('SELECT MAX(check_number) AS maxCheckNumber FROM "Check";');
+        res.json(maxCheckNumber);
+    } catch (error) {
+        console.error('Error fetching max check number:', error.message); // Log error message
+        res.status(500).json({ error: 'Error fetching max check number' });
+    }
+});
+app.get('/get-upc-options', async (req, res) => {
+    try {
+        const upcs = await db.any('SELECT upc, upc_prom, product_name  FROM "Store_Product" INNER JOIN public."Product" P on "Store_Product".id_product = P.id_product;');
+        res.json(upcs);
+    } catch (error) {
+        console.error('Error fetching upc number:', error.message);
+        res.status(500).json({ error: 'Error fetching upc number' });
+    }
+});
+
+/**
+ * CARDS*************************************************************************************************************
+ */
+app.get('/get-customer-cards', async (req, res) => {
+    try {
+        const upcs = await db.any('SELECT *  FROM "Customer_Card";');
+        res.json(upcs);
+    } catch (error) {
+        console.error('Error fetching cards:', error.message);
+        res.status(500).json({ error: 'Error fetching cards' });
+    }
+});
+
+
 /*
 * *
 * *

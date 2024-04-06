@@ -10,6 +10,8 @@ import EditEmployeePage from "../EmployeePage/EditEmployeePage";
 import CategoriesPage from "../Categories/CategoriesPage";
 import AddCategoryPage from "../Categories/AddCategoryPage";
 import EditCategoryPage from "../Categories/EditCategoryPage";
+import CheckPage from "../CheckPage/CheckPage";
+import AddCheckAndSalePage from "../CheckPage/AddCheckPage";
 
 
 function App() {
@@ -27,6 +29,8 @@ function App() {
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/add-category" element={<AddCategoryPage />} />
             <Route path="/categories/:id" element={<EditCategoryPage />} />
+            <Route path="/checks" element={<CheckPage />} />
+            <Route path="/add-check" element={<AddCheckAndSalePage />} />
         </Routes>
       </BrowserRouter>
   );

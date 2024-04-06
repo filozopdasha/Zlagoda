@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import './ProductsPageStyles.css';
 import MenuBar from "../MenuBar/MenuBar";
 import {NavLink, useNavigate} from "react-router-dom";

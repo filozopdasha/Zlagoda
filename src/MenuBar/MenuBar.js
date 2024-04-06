@@ -20,6 +20,9 @@ const MenuBar = () => {
                         <NavLink to="/employees" className="nav-link" activeClassName="active">Employees</NavLink>
                     </li>
                     <li className="nav-item">
+                        <NavLink to="/checks" className="nav-link" activeClassName="active">Checks</NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink to="/" className="nav-link" activeClassName="active">Login</NavLink>
                     </li>
                 </ul>
