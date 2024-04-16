@@ -1,0 +1,169 @@
+.product-table {
+    width: 100%;
+    margin-top: 100px;
+}
+
+.date-search {
+    width: 100%;
+    margin-top: 20px;
+}
+
+
+
+.add-product {
+    background-color: rgba(163, 195, 238, 0.69);
+    width: 8%;
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    position: relative;
+    top: 100px;
+    right: -48%;
+}
+
+.add-product-text {
+    font-size: 15px;
+    color: black;
+}
+
+
+.title {
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 1;
+    background-color: rgba(163, 195, 238, 0.69);
+}
+
+.delete-product {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.edit-product {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.product-data {
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.space {
+    padding: 20px;
+}
+
+.title:hover,
+.product-data:hover {
+    background-image: linear-gradient(to top, rgba(229, 236, 248, 0.32) 0%, rgba(163, 195, 238, 0.84) 50%, transparent 100%);
+    transform: scale(1.03);
+    z-index: 2;
+}
+
+.title:hover::before {
+    content: attr(title);
+    background-color: rgba(139, 182, 239, 0.76);
+    color: white;
+    font-size: 15px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.delete-product:hover {
+    background-color: rgba(241, 178, 195, 0.67);
+    background-image: linear-gradient(to top, rgba(250, 178, 191, 0.32) 0%, rgba(241, 108, 139, 0.84) 50%, transparent 100%);
+    text-decoration: underline;
+}
+
+.edit-product:hover,
+.add-product:hover {
+    background-color: rgba(184, 241, 178, 0.67);
+    background-image: linear-gradient(to top, rgba(190, 250, 178, 0.32) 0%, rgba(145, 241, 108, 0.84) 50%, transparent 100%);
+    text-decoration: underline;
+}
+
+.error-message {
+    text-align: center;
+    position: relative;
+    top: 250px;
+}
+
+.footer {
+    color: black;
+    padding: 20px 0;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    top: 50%;
+    left: 0;
+    right: 0;
+}
+
+.sale-sign {
+    background-color: green;
+    color: rgba(29, 54, 26, 0.84);
+    padding: 5px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.search-bar-store-categories {
+    width: 32.2%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-right: 0.5%; /* Reduce the right margin */
+    margin-top: 10%;
+    margin-left:10%;
+}
+
+.add-store-button {
+    background-color: rgba(163, 195, 238, 0.69);
+    width: 10%;
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-left: 35%; /* Reduce the left margin */
+}
+.date-search{
+    margin-left:10%;
+}
+.store-table{
+    width: 100%;
+
+}

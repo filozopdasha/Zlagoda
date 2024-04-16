@@ -28,6 +28,9 @@ const MenuBar = () => {
                     <li className="nav-item">
                         <NavLink to="/" className="nav-link" activeClassName="active">Login</NavLink>
                     </li>
+                    <li className="nav-item">
+                        <NavLink to="/store-products" className="nav-link" activeClassName="active">Store Products</NavLink>
+                    </li>
                 </ul>
             </nav>
         </header>

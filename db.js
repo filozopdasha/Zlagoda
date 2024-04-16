@@ -263,7 +263,7 @@ app.get('/get-checks', (req, res) =>{
 });
 app.get('/get-sales/:id', (req, res) => {
     const checkNum = req.params.id;
-    db.any('SELECT * FROM ((("Sale" INNER JOIN "Store_Product" ON "Sale".upc = "Store_Product".upc) INNER JOIN "Product" ON "Product".id_product = "Store_Product".id_product) INNER JOIN "Check" ON "Check".check_number = "Sale".check_number) LEFT JOIN "Customer_Card" ON "Customer_Card".card_number = "Check".card_number WHERE "Check".check_number = $1;', [checkNum])
+    db.any('SELECT * FROM ((("Store_Product" INNER JOIN "Sale" ON "Store_Product".upc = "Sale".upc) INNER JOIN "Product" ON "Product".id_product = "Store_Product".id_product) INNER JOIN "Check" ON "Check".check_number = "Sale".check_number) LEFT JOIN "Customer_Card" ON "Customer_Card".card_number = "Check".card_number WHERE "Check".check_number = $1;', [checkNum])
         .then(result => {
             res.json(result);
         })
@@ -463,6 +463,165 @@ app.get('/get-card-info/:id', (req, res) =>{
             res.status(500).json({error:error.message});
         });
 });
+
+
+
+/**
+ * STORE PRODUCTS***********************************************************************************************************
+ */
+app.get('/get-store-products', (req, res) => {
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT p.*, sp.upc, sp.upc_prom, sp.selling_price, sp.promotional_product, sp.products_number FROM "Product" p INNER JOIN "Store_Product" sp ON p.id_product = sp.id_product ORDER BY ${orderBy};`)
+        .then(products => {
+            res.json(products);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+
+
+app.get('/get-store-product-sales/:upc', (req, res) => {
+    const upc = req.params.upc;
+    db.any('SELECT * FROM (("Sale" INNER JOIN "Store_Product" ON "Sale".upc = "Store_Product".upc) INNER JOIN "Product" ON "Store_Product".id_product = "Product".id_product) WHERE "Store_Product".upc = $1;', [upc])
+        .then(result => {
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.delete('/delete-store-product/:id', (req, res) => {
+    const idProd = req.params.id;
+    db.any('DELETE FROM "Store_Product" WHERE id_product = $1;', [idProd])
+        .then(result => {
+            res.json(result);
+        })
+        .catch(error => {
+            console.error('Error deleting product:', error.message);
+            res.status(500).json({ error: error.message });
+        });
+});
+
+app.put('/update-store-products/:id', (req, res) => {
+    const productUpc = req.params.id;
+    const { upc, selling_price, promotional_product, products_number } = req.body;
+
+    let upc_prom = null;
+
+    if (promotional_product === 'false') {
+        upc_prom = null;
+    } else {
+        upc_prom = req.body.upc_prom;
+    }
+
+    const updateQuery = 'UPDATE "Store_Product" SET upc = $1, upc_prom = $2, selling_price = $3, promotional_product = $4, products_number = $5 WHERE upc = $6;';
+    const queryParams = [upc, upc_prom, selling_price, promotional_product, products_number, productUpc];
+
+    db.none(updateQuery, queryParams)
+        .then(() => {
+            res.json({ message: 'Store product updated successfully' });
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+app.get('/get-all-upc-by-product-id/:id', (req, res) => {
+    const productId = req.params.id;
+    db.any('SELECT upc FROM "Store_Product" WHERE id_product = $1', [productId])
+        .then(upcList => {
+            const upcOptions = upcList.map(upc => upc.upc);
+            res.json(upcOptions);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+
+app.get('/get-all-upc', (req, res) => {
+    db.any('SELECT DISTINCT upc FROM "Store_Product"')
+        .then(upcList => {
+            const upcOptions = upcList.map(upc => upc.upc);
+            res.json(upcOptions);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.get('/get-all-product-ids', (req, res) => {
+    db.any('SELECT id_product FROM "Product"')
+        .then(productIds => {
+            res.json(productIds);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.post('/add-store-product', (req, res) => {
+    const { productId, upc, upcProm, sellingPrice, promotionalProduct, productsNumber } = req.body;
+
+    let upc_prom = null;
+
+    if (promotionalProduct === 'false') {
+        upc_prom = null;
+    } else {
+        upc_prom = upcProm;
+    }
+
+    const insertQuery = 'INSERT INTO "Store_Product" (id_product, upc, upc_prom, selling_price, promotional_product, products_number) VALUES ($1, $2, $3, $4, $5, $6);';
+    const queryParams = [productId, upc, upc_prom, sellingPrice, promotionalProduct, productsNumber];
+
+    db.none(insertQuery, queryParams)
+        .then(() => {
+            res.json({ message: 'Store product added successfully' });
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+
+app.get('/get-store-products-by-date-period', (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    db.any(`
+        SELECT
+            p.*, sp.upc, sp.upc_prom, sp.selling_price, sp.promotional_product, sp.products_number,
+            c.print_date
+        FROM
+            "Product" p
+        INNER JOIN
+            "Store_Product" sp ON p.id_product = sp.id_product
+        INNER JOIN
+            "Sale" s ON sp.upc = s.upc
+        INNER JOIN
+                
+            "Check" c ON s.check_number = c.check_number
+        WHERE
+           DATE(c.print_date )>= $1 AND DATE(c.print_date) <= $2
+    `, [startDate, endDate])
+        .then(products => {
+            res.json(products);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -53,6 +53,7 @@ const CheckPage = () => {
                 let total = 0;
                 salesdata.forEach(sale => {
                     total += sale.selling_price * sale.product_number;
+                    console.log(sale.selling_price)
                 });
                 setTotalCheckPrice(total);
             } catch (error) {

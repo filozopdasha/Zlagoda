@@ -15,6 +15,9 @@ import AddCheckAndSalePage from "../CheckPage/AddCheckPage";
 import CustomerCardPage from "../CustomerCard/CustomerCardPage";
 import AddCustomerCardPage from "../CustomerCard/AddCustomerCardPage";
 import EditCustomerCardPage from "../CustomerCard/EditCustomerCardPage";
+import StoreProductsPage from "../StoreProducts/StoreProducts";
+import EditStoreProductsPage from "../StoreProducts/EditStoreProductsPage";
+import AddStoreProductPage from "../StoreProducts/AddStoreProductPage";
 
 
 function App() {
@@ -37,6 +40,9 @@ function App() {
             <Route path="/card/:id" element={<EditCustomerCardPage />} />
             <Route path="/checks" element={<CheckPage />} />
             <Route path="/add-check" element={<AddCheckAndSalePage />} />
+            <Route path="/store-products" element={<StoreProductsPage />} />
+            <Route path="/edit-product/:id" element={<EditStoreProductsPage/>} />
+            <Route path="/add-store-product" element={<AddStoreProductPage/>} />
         </Routes>
       </BrowserRouter>
   );
