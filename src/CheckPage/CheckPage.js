@@ -147,6 +147,7 @@ const CheckPage = () => {
             setFetchError("Please, fill in all fields correctly!")
         }
     };
+
     const handlePrint = () => {
         window.print();
     };
@@ -201,9 +202,9 @@ const CheckPage = () => {
                 className="search-bar-categories"
             />
             {role === "Cashier" && (
-            <button className="add-check-button">
-                <NavLink to="/add-check" className="add-employee-text">Add Check</NavLink>
-            </button>
+                <button className="add-check-button">
+                    <NavLink to="/add-check" className="add-employee-text">Add Check</NavLink>
+                </button>
             )}
             <div>
                 <input
@@ -299,11 +300,9 @@ const CheckPage = () => {
                                     <p>{selectedCheck.vat} ₴</p>
                                 </div>
                                 <button onClick={handlePrint} className="print-button">Print</button>
-
                             </div>
                             <div className="zigzag-bottom"></div>
                         </div>
-
                     </div>
                 </div>
             )}
@@ -321,7 +320,7 @@ const CheckPage = () => {
                     </div>
                 ))}
             </div>
-            {filteredChecks.length === 0 && <div className="error-message"><h2 >No checks found.</h2></div>}
+            {filteredChecks.length === 0 && <div className="error-message"><h2>No checks found.</h2></div>}
             {filteredChecks.length !== 0 &&
                 <footer className="footer">
                     <div className="contact-info">

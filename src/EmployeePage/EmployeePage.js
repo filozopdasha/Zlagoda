@@ -14,6 +14,14 @@ const EmployeePage = () => {
     const [popupEmployee, setPopupEmployee] = useState(null);
     const [showCashiers, setShowCashiers] = useState(false);
 
+
+
+    const [showBest, setShowBest] = useState(false);//
+    const [inputActive, setInputActive] = useState(false);//
+    const [inputText, setInputText] = useState('');//
+    const [shifts, setShifts] = useState(false);//
+
+
     const [role, setRole] = useState('');
     const [id, setId] = useState('');
 
@@ -29,22 +37,23 @@ const EmployeePage = () => {
     }, []);
 
     useEffect(() => {
-        const fetchEmployee = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/get-employees?sortBy=${sortBy}&sortOrder=${sortOrder}`);
-                if (!response.ok) {
-                    throw new Error('Could not fetch employees');
-                }
-                const data = await response.json();
-                setEmployee(data);
-                setFetchError(null);
-            } catch (error) {
-                setFetchError(error.message);
-                setEmployee(null);
-            }
-        };
         fetchEmployee();
     }, [sortBy, sortOrder, showCashiers]);
+
+    const fetchEmployee = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/get-employees?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch employees');
+            }
+            const data = await response.json();
+            setEmployee(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setEmployee(null);
+        }
+    };
 
 
     const handleDeleteEmployee = async (employeeId) => {
@@ -93,6 +102,70 @@ const EmployeePage = () => {
     };
     const showAllButtonText = showCashiers ? "Show All" : "Show Cashiers";
 
+//************************************************
+    const fetchBestCashiers = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/get-best-worker`);
+            if (!response.ok) {
+                throw new Error('Could not fetch best cashier');
+            }
+            const data = await response.json();
+            setEmployee(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setEmployee(null);
+        }
+    };
+    const handleShowBest = () =>{
+        setShowBest(prevState => !prevState)
+        if(!showBest){
+            fetchBestCashiers()
+        }else{
+            fetchEmployee()
+        }
+    }
+    const showBestButtonText = showBest ? "Show All" : "All-shifts cashiers";
+
+
+
+    const fetchWorkDays = async () => {
+        try {
+            const month = inputText; // Assuming inputText contains the month
+            const response = await fetch(`http://localhost:8081/get-work-days-in-month?month=${month}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch shifts');
+            }
+            const data = await response.json();
+            setEmployee(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setEmployee(null);
+        }
+    };
+
+
+    const handleInputChange = (e) => {
+        setInputText(e.target.value);
+    };
+
+    const handleInputActivation = () => {
+        setInputActive(true);
+    };
+
+    const handleSearchMonth = () => {
+        setShifts(true)
+        fetchWorkDays(inputText)
+    };
+
+    const handleCancelSearchMonth = () => {
+        setShifts(false)
+        setInputActive(false);
+        setInputText('');
+        fetchEmployee()
+    }
+
 
     let filteredEmployee = employee ? employee.filter(employee =>
         (showCashiers ? employee.empl_role === "Cashier" : true) &&
@@ -122,18 +195,41 @@ const EmployeePage = () => {
                 className="search-bar-employee"
             />
             )}
-            <div className="add-employee-container">
-                {role === "Manager" && (
-                <button className="add-employee-button">
-                    <NavLink to="/add-employee" className="add-employee-text">Add Employee</NavLink>
-                </button>
-                )}
-                {role === "Manager" && (
-                <button className="toggle-cashiers-button add-employee-button" onClick={handleToggleCashiers}>
-                    {showAllButtonText}
-                </button>
-                )}
-            </div>
+            {role === "Manager" && (
+                <div className="add-employee-container">
+
+                    <button className="add-employee-button">
+                        <NavLink to="/add-employee" className="add-employee-text">Add Employee</NavLink>
+                    </button>
+
+                    <button className="toggle-cashiers-button add-employee-button" onClick={handleToggleCashiers}>
+                        {showAllButtonText}
+                    </button>
+
+                    <button className="toggle-cashiers-button add-employee-button" onClick={handleShowBest}>
+                        {showBestButtonText}
+                    </button>
+
+
+                    {!inputActive && (
+                        <button className="add-employee-button" onClick={handleInputActivation}>Shifts per
+                            month</button>
+                    )}
+                    {inputActive && (
+                        <input
+                            type="text"
+                            value={inputText}
+                            onChange={handleInputChange}
+                            className="date-bar-employee"
+                            placeholder="MM"
+                        />)}
+                    {inputActive && (
+                        <button className="add-employee-button" onClick={handleSearchMonth}>Search</button>
+                    )}
+                    {inputActive && (
+                        <button className="add-employee-button" onClick={handleCancelSearchMonth}>Cancel</button>
+                    )}
+                </div>)}
 
 
             {showPopup && popupEmployee && (
@@ -179,24 +275,31 @@ const EmployeePage = () => {
                                 <th className="title-employee" title="Sort by Employee Name"
                                     onClick={() => handleSort("empl_name")}>Employee Name
                                 </th>
+                                {!shifts && (
                                 <th className="title-employee" title="Sort by Employee role"
                                     onClick={() => handleSort("empl_role")}>Employee role
                                 </th>
-                                <th className="space"></th>
+                                )}
+                                {!shifts && (<th className="space"></th>)}
                                 <th className="title-employee" title="Sort by Employee Phone Number"
                                     onClick={() => handleSort("phone_number")}>Phone Number
                                 </th>
-                                <th className="title-employee" title="Sort by Employee Phone City"
+                                {shifts && (
+                                    <th className="title-employee" title="Number of shifts per month"
+                                        onClick={() => handleSort("worked_days")}>Worked days
+                                    </th>
+                                )}
+                                {!shifts && (<th className="title-employee" title="Sort by Employee Phone City"
                                     onClick={() => handleSort("city")}>City
-                                </th>
-                                <th className="title-employee" title="Sort by Employee Street"
+                                </th>)}
+                                {!shifts && (<th className="title-employee" title="Sort by Employee Street"
                                     onClick={() => handleSort("street")}>Street
-                                </th>
+                                </th>)}
 
-                                {role === "Manager" && (
+                                {role === "Manager" && !shifts && (
                                     <th className="title-employee" title="⛌"></th>
                                 )}
-                                {role === "Manager" && (
+                                {role === "Manager" && ! shifts && (
                                 <th className="title-employee" title="✎"></th>
                                 )}
                             </tr>
@@ -207,12 +310,13 @@ const EmployeePage = () => {
                                     <td className="employee-data" onClick={() => handlePopup(employee.id_employee)}>{employee.id_employee}</td>
                                     <td className="employee-data">{employee.empl_surname}</td>
                                     <td className="employee-data">{employee.empl_name}</td>
-                                    <td className="employee-data">{employee.empl_role}</td>
-                                    <td className="space"></td>
+                                    {!shifts && (<td className="employee-data">{employee.empl_role}</td>)}
+                                    {!shifts && (<td className="space"></td>)}
                                     <td className="employee-data">{employee.phone_number}</td>
-                                    <td className="employee-data">{employee.city}</td>
-                                    <td className="employee-data">{employee.street}</td>
-                                    {role === "Manager" && (
+                                    {shifts && (<td className="employee-data">{employee.worked_days}</td>)}
+                                    {!shifts && (<td className="employee-data">{employee.city}</td>)}
+                                    {!shifts && (<td className="employee-data">{employee.street}</td>)}
+                                    {role === "Manager" && !shifts && (
                                         <td className="employee-data delete-employee">
                                             <button
                                                 className="delete-employee title-employee"
@@ -221,7 +325,7 @@ const EmployeePage = () => {
                                             </button>
                                         </td>
                                     )}
-                                    {role === "Manager" && (
+                                    {role === "Manager" && !shifts && (
                                     <td className="employee-data edit-employee">
                                         <button
                                             className="edit-employee title-employee"

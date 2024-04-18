@@ -175,7 +175,7 @@
 .add-employee-button,
 .show-cashiers-button {
     background-color: rgba(163, 195, 238, 0.69);
-    width: 8%;
+    width: 10%;
     border: 1px solid black;
     padding: 8px;
     margin: 10px;
@@ -194,7 +194,8 @@
 .profile-container {
     border-radius: 10px;
     width: 50%;
-    margin-left: 20%;
+    margin-left: 25%;
+    margin-top: 10%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 30px;
     margin-bottom: 20px;
@@ -222,6 +223,16 @@
 .profile-details strong {
     font-weight: bold;
     color: #222222;
+}
+.date-bar-employee{
+    width: 5%;
+    height: 100%;
+    margin-top: 0.5%;
+    margin-left: 10%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
 }
 .for-sales{
     margin-left:9.5%;

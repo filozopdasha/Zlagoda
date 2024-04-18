@@ -195,21 +195,21 @@ const StoreProductsPage = () => {
                         <table className="store-table">
                             <thead>
                             <tr>
-                                    <th className="title" title="Sort by UPC" onClick={() => handleSort("upc")}>UPC</th>
-                                  <th className="title" title="Sort by Product Name"
+                                <th className="title" title="Sort by UPC" onClick={() => handleSort("upc")}>UPC</th>
+                                <th className="title" title="Sort by Product Name"
                                     onClick={() => handleSort("product_name")}>Product Name
                                 </th>
                                 {!totalSales && ( <th className="title" title="Sort by Product ID"
-                                    onClick={() => handleSort("id_product")}>Product ID
+                                                      onClick={() => handleSort("id_product")}>Product ID
                                 </th>)}
                                 {!totalSales && (<th className="title" title="Sort by Products Number"
-                                    onClick={() => handleSort("products_number")}>Products Number
+                                                     onClick={() => handleSort("products_number")}>Products Number
                                 </th>)}
                                 {totalSales && (<th className="title" title="Sort by Total Units Sold"
-                                                     onClick={() => handleSort("total_units_sold")}>Total Units Sold
+                                                    onClick={() => handleSort("total_units_sold")}>Total Units Sold
                                 </th>)}
                                 {!totalSales && (  <th className="title" title="Sort by Selling Price"
-                                    onClick={() => handleSort("selling_price")}>Selling Price
+                                                       onClick={() => handleSort("selling_price")}>Selling Price
                                 </th>)}
                                 {role === "Manager" &&  !totalSales && (<th className="title" title="Actions"></th>)}
                                 {role === "Manager" && !totalSales &&(<th className="title" title="Actions"></th>)}
@@ -228,13 +228,13 @@ const StoreProductsPage = () => {
                                         )}
                                     </td>
                                     {!totalSales && (  <td className="product-data"
-                                        onClick={() => handlePopup(product.upc)}>{product.id_product}</td>)}
+                                                           onClick={() => handlePopup(product.upc)}>{product.id_product}</td>)}
                                     {!totalSales && (  <td className="product-data"
-                                        onClick={() => handlePopup(product.upc)}>{product.products_number}</td>)}
+                                                           onClick={() => handlePopup(product.upc)}>{product.products_number}</td>)}
                                     {!totalSales && ( <td className="product-data"
-                                        onClick={() => handlePopup(product.upc)}>{product.selling_price}</td>)}
+                                                          onClick={() => handlePopup(product.upc)}>{product.selling_price}</td>)}
                                     {totalSales && (  <td className="product-data"
-                                                           onClick={() => handlePopup(product.upc)}>{product.total_units_sold}</td>)}
+                                                          onClick={() => handlePopup(product.upc)}>{product.total_units_sold}</td>)}
                                     {role === "Manager" && !totalSales &&(
                                         <td className="product-data actions">
                                             <button

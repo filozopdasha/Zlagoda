@@ -639,6 +639,44 @@ app.get('/get-store-products-without-sales', (req, res) => {
 });
 
 
+
+/**
+ * JULIA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
+app.get('/get-best-worker', (req, res) => {
+    db.any(`
+           SELECT *
+           FROM "Employee" e 
+           WHERE NOT EXISTS(SELECT DISTINCT DATE(print_date) 
+                            FROM "Check" c 
+                            WHERE NOT EXISTS(SELECT 1 
+                                             FROM "Check" 
+                                             WHERE id_employee = e.id_employee 
+                                               AND DATE(c.print_date)= DATE(print_date)));`)
+        .then(products => {
+            res.json(products);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.get('/get-work-days-in-month', (req, res) =>{
+    const { month } = req.query;
+    db.any(`SELECT e.id_employee, empl_surname, empl_name, phone_number, city, street, COUNT(DISTINCT EXTRACT(DAY FROM c.print_date)) AS worked_days
+            FROM "Employee" e
+                     LEFT JOIN "Check" c ON e.id_employee = c.id_employee
+            AND EXTRACT(MONTH FROM print_date) = $1
+            GROUP BY e.id_employee, empl_surname, empl_name, phone_number, city, street
+            ORDER BY worked_days DESC`, [month])
+        .then(result =>{
+            res.json(result);
+        })
+        .catch(error => {
+            res.status(500).json({error:error.message});
+        });
+});
+
+
 /*
 * *
 * *
