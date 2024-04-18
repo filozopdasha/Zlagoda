@@ -15,6 +15,14 @@ const StoreProductsPage = () => {
     const [popupProduct, setPopupProduct] = useState(null);
     const navigate = useNavigate();
 
+    const [role, setRole] = useState('');
+    useEffect(() => {
+        const storedRole = localStorage.getItem('role');
+        if (storedRole) {
+            setRole(storedRole);
+        }
+    }, []);
+
     useEffect(() => {
         fetchStoreProducts();
     }, [sortBy, sortOrder]);
@@ -124,9 +132,11 @@ const StoreProductsPage = () => {
                 onChange={handleSearch}
                 className="search-bar-store-categories"
             />
+            {role === "Manager" && (
             <button className="add-store-button">
                 <NavLink to="/add-store-product" className="add-employee-text">Add Store Product</NavLink>
             </button>
+            )}
             <div className="date-search">
                 <input
                     type="text"
@@ -188,8 +198,9 @@ const StoreProductsPage = () => {
                                 <th className="title" title="Sort by Selling Price"
                                     onClick={() => handleSort("selling_price")}>Selling Price
                                 </th>
-                                <th className="title" title="Actions"></th>
-                                <th className="title" title="Actions"></th>
+                                {role === "Manager" && (<th className="title" title="Actions"></th>)}
+                                {role === "Manager" && (<th className="title" title="Actions"></th>)}
+
                             </tr>
                             </thead>
                             <tbody>
@@ -209,6 +220,7 @@ const StoreProductsPage = () => {
                                         onClick={() => handlePopup(product.upc)}>{product.products_number}</td>
                                     <td className="product-data"
                                         onClick={() => handlePopup(product.upc)}>{product.selling_price}</td>
+                                    {role === "Manager" && (
                                     <td className="product-data actions">
                                         <button
                                             className="edit-product title"
@@ -217,14 +229,15 @@ const StoreProductsPage = () => {
                                             <NavLink to={"/store-products/" + product.upc}
                                                      className="add-product-text">✎</NavLink>
                                         </button>
-                                    </td>
+                                    </td>)}
+                                    {role === "Manager" && (
                                     <td className="product-data actions">
                                         <button
                                             className="delete-product title"
                                             title="Remove product"
                                             onClick={() => handleDeleteProduct(product.upc)}>⛌
                                         </button>
-                                    </td>
+                                    </td>)}
                                 </tr>
                             ))}
                             </tbody>
@@ -233,6 +246,16 @@ const StoreProductsPage = () => {
                 </div>
             )}
             {filteredProducts.length === 0 && <div className="error-message"><h2>No products found.</h2></div>}
+            {filteredProducts.length !== 0 &&
+                <footer className="footer">
+                    <div className="contact-info">
+                        <hr></hr>
+                        <p>Contact us:</p>
+                        <p>Email: yu.skip@ukma.edu.ua</p>
+                        <p>Email: d.filozop@ukma.edu.ua</p>
+                        <p>Phone: +1234567890</p>
+                    </div>
+                </footer>}
         </div>
     );
 };

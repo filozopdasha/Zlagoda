@@ -12,6 +12,14 @@ const ProductsPage = () => {
     const [sortBy, setSortBy] = useState("id_product");
     const [sortOrder, setSortOrder] = useState("asc");
 
+    const [role, setRole] = useState('');
+    useEffect(() => {
+        const storedRole = localStorage.getItem('role');
+        if (storedRole) {
+            setRole(storedRole);
+        }
+    }, []);
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -75,9 +83,11 @@ const ProductsPage = () => {
                 onChange={handleSearch}
                 className="search-bar"
             />
+            {role === "Manager" && (
             <button className="add-product">
                 <NavLink to="/add-product" className="add-product-text">Add Product</NavLink>
             </button>
+            )}
             {filteredProducts.length > 0 && (
                 <div className="products">
                     <div style={{width: '80%', margin: '0 auto'}}>
@@ -90,8 +100,12 @@ const ProductsPage = () => {
                                 <th className="title" title="Sort by Category Number" onClick={() => handleSort("category_number")}>Category Number</th>
                                 <th className="title" title="Sort by Manufacturer" onClick={() => handleSort("manufacturer")}>Manufacturer</th>
                                 <th className="title" title="Sort by Characteristics" onClick={() => handleSort("characteristics")}>Characteristics</th>
+                                {role === "Manager" && (
                                 <th className="title" title="⛌"></th>
+                                )}
+                                {role === "Manager" && (
                                 <th className="title" title="✎"></th>
+                                )}
                             </tr>
                             </thead>
                             <tbody>
@@ -103,13 +117,16 @@ const ProductsPage = () => {
                                     <td className="product-data">{product.category_number}</td>
                                     <td className="product-data">{product.manufacturer}</td>
                                     <td className="product-data">{product.characteristics}</td>
-                                    <td className="product-data delete-product">
-                                        <button
-                                            className="delete-product title"
-                                            title="Remove product"
-                                            onClick={() => handleDeleteProduct(product.id_product)}>⛌
-                                        </button>
-                                    </td>
+                                    {role === "Manager" && (
+                                        <td className="product-data delete-product">
+                                            <button
+                                                className="delete-product title"
+                                                title="Remove product"
+                                                onClick={() => handleDeleteProduct(product.id_product)}>⛌
+                                            </button>
+                                        </td>
+                                    )}
+                                    {role === "Manager" && (
                                     <td className="product-data edit-product">
                                         <button
                                             className="edit-product title"
@@ -117,6 +134,7 @@ const ProductsPage = () => {
                                             <NavLink to={"/products/"+product.id_product} className="add-product-text">✎</NavLink>
                                         </button>
                                     </td>
+                                    )}
                                 </tr>
                             ))}
                             </tbody>

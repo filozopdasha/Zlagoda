@@ -613,18 +613,6 @@ app.get('/get-store-products-by-date-period', (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 * *
 * *

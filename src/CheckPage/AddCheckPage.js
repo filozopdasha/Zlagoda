@@ -4,7 +4,35 @@ import './AddCheckStyles.css';
 import {useNavigate} from "react-router-dom";
 
 const AddCheckAndSalePage = () => {
+
+    const [id, setId] = useState('');
+    useEffect(() => {
+        const storedId = localStorage.getItem('id');
+        if (storedId) {
+            setId(storedId);
+        }
+        fetchMaxCheckNumber();
+        fetchUpcOptions();
+        fetchCardNumbers();
+        console.log(checkData)
+
+    }, []);
+
+
     const navigate = useNavigate();
+
+    const [fetchError, setFetchError] = useState(null);
+    const [upcOptions, setUpcOptions] = useState([]);
+    const [cardOptions, setCardOptions] = useState([]);
+    const [checkCreated, setCheckCreated] = useState(false);
+    const [sales, setSales] = useState([]);
+    const [salesToDisplay, setSalesToDispaly] = useState([]);
+    const [totalCheckPrice, setTotalCheckPrice] = useState(0);
+    const [actualPrice, setActualPrice] = useState(0);
+    const [vat, setVat] = useState(0);
+    const [searchText, setSearchText] = useState('');
+    const [maxNum, setMaxNum] = useState('');
+    const [cardNum, setCardNum] = useState('');
     const [checkData, setCheckData] = useState({
         check_number: '',
         id_employee: '',
@@ -17,32 +45,13 @@ const AddCheckAndSalePage = () => {
         product_number: ''
     });
 
-    const [fetchError, setFetchError] = useState(null);
-    const [upcOptions, setUpcOptions] = useState([]);
-    const [employeeOptions, setEmployeeOptions] = useState([]);
-    const [cardOptions, setCardOptions] = useState([]);
-    const [checkCreated, setCheckCreated] = useState(false);
-    const [sales, setSales] = useState([]);
-    const [salesToDisplay, setSalesToDispaly] = useState([]);
-    const [totalCheckPrice, setTotalCheckPrice] = useState(0);
-    const [actualPrice, setActualPrice] = useState(0);
-    const [vat, setVat] = useState(0);
-    const [searchText, setSearchText] = useState('');
-
-    useEffect(() => {
-        fetchMaxCheckNumber();
-        fetchUpcOptions();
-        fetchEmployeeDetails();
-        fetchCardNumbers();
-    }, []);
-
     const fetchMaxCheckNumber = async () => {
         try {
             const response = await axios.get('http://localhost:8081/get-max-check-number');
             const maxCheckNumber = response.data.maxchecknumber;
 
-            setCheckData({ ...checkData, check_number: parseInt(maxCheckNumber) + 1 });
-            setSaleData({...saleData, check_number: parseInt(maxCheckNumber) + 1 });
+            setMaxNum(parseInt(maxCheckNumber) + 1);
+            setSaleData({ ...saleData, check_number: parseInt(maxCheckNumber) + 1 });
             setFetchError(null);
         } catch (error) {
             setFetchError(error.message);
@@ -57,21 +66,6 @@ const AddCheckAndSalePage = () => {
             }
             const data = await response.json();
             setUpcOptions(data)
-            setFetchError(null);
-        } catch (error) {
-            setFetchError(error.message);
-        }
-    };
-
-    const fetchEmployeeDetails = async () => {
-        try {
-            const response = await fetch(`http://localhost:8081/get-employees?sortBy=${"id_employee"}&sortOrder=${"ASC"}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch employee details');
-            }
-            const data = await response.json();
-            const cashiers = data.filter(employee => employee.empl_role === "Cashier");
-            setEmployeeOptions(cashiers);
             setFetchError(null);
         } catch (error) {
             setFetchError(error.message);
@@ -125,8 +119,8 @@ const AddCheckAndSalePage = () => {
     };
 
     const handleCheckInputChange = (event) => {
-        const { name, value } = event.target;
-        setCheckData({ ...checkData, [name]: value });
+        const { value } = event.target;
+        setCardNum(value);
     };
 
     const handleSaleInputChange = (event) => {
@@ -142,6 +136,10 @@ const AddCheckAndSalePage = () => {
     };
 
     const addCheck = async (e) => {
+        setCheckData({
+            check_number: maxNum,
+            id_employee: id,
+            card_number: cardNum})
         e.preventDefault();
         try {
             const response = await fetch('http://localhost:8081/add-check', {
@@ -149,7 +147,11 @@ const AddCheckAndSalePage = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(checkData),
+                body: JSON.stringify({
+                    check_number: maxNum,
+                    id_employee: id,
+                    card_number: cardNum
+                }),
             });
 
             if (!response.ok) {
@@ -207,20 +209,6 @@ const AddCheckAndSalePage = () => {
                 {!checkCreated && (
                     <div className="check-container">
                         <h2 className="check-form">Add New Check</h2>
-                        <select
-                            className="check-input"
-                            name="id_employee"
-                            value={checkData.id_employee}
-                            onChange={handleCheckInputChange}
-                        >
-                            <option value="">Select Employee ID</option>
-                            {employeeOptions.map(employee => (
-                                <option key={employee.id_employee} value={employee.id_employee}>
-                                    {employee.id_employee} - {employee.empl_name} {employee.empl_surname}
-                                </option>
-                            ))}
-                        </select>
-
                         <input
                             type="text"
                             placeholder="Search Phone Numbers"
@@ -232,7 +220,7 @@ const AddCheckAndSalePage = () => {
                         <select
                             className="check-input"
                             name="card_number"
-                            value={checkData.card_number}
+                            value={cardNum}
                             onChange={handleCheckInputChange}
                         >
                             <option value="">Select Card Number</option>
@@ -267,7 +255,7 @@ const AddCheckAndSalePage = () => {
                             <option value="">Select UPC</option>
                             {upcOptions.filter(option => option.upc.toLowerCase().includes(searchText.toLowerCase())).map(option => (
                                 <option key={option.upc} value={option.upc}>
-                                    {option.upc} - {option.product_name}
+                                    {option.promotional_product === true ? "prom" :""} - {option.upc} - {option.product_name}
                                 </option>
                             ))}
                         </select>

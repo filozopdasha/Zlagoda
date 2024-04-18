@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import './AddEmployeePageStyles.css';
+import bcrypt from "bcryptjs";
 
 const AddEmployeePage = () => {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ const AddEmployeePage = () => {
     const [emplSurname, setSurname] = useState('');
     const [emplPatronymic, setPatronymic] = useState('');
     const [emplRole, setRole] = useState('');
+    const [password, setPassword] = useState('');
     const [emplSalary, setSalary] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [dateOfStart, setDateOfStart] = useState('');
@@ -39,17 +41,6 @@ const AddEmployeePage = () => {
         fetchMaxId();
     }, []);
 
-    const generatePassword = () => {
-        const length = 8;
-        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        let password = "";
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * charset.length);
-            password += charset[randomIndex];
-        }
-        return password;
-    };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -59,8 +50,9 @@ const AddEmployeePage = () => {
             return;
         }
 
-        let password = generatePassword()
         try {
+            const hashedPassword = await bcrypt.hash(password, 10);
+
             const response = await fetch('http://localhost:8081/add-employee', {
                 method: 'POST',
                 headers: {
@@ -70,7 +62,7 @@ const AddEmployeePage = () => {
                     id_employee: id,
                     empl_name: emplName,
                     empl_surname: emplSurname,
-                    password: password,
+                    password: hashedPassword,
                     empl_patronymic: emplPatronymic,
                     empl_role: emplRole,
                     salary: emplSalary,
@@ -120,6 +112,12 @@ const AddEmployeePage = () => {
                            id="empl_patronymic"
                            value={emplPatronymic}
                            onChange={(e) => setPatronymic(e.target.value)}
+                    />
+                    <label htmlFor="empl_patronymic">Employee Password:</label>
+                    <input type="text"
+                           id="password"
+                           value={password}
+                           onChange={(e) => setPassword(e.target.value)}
                     />
                     <label htmlFor="empl_role">Employee Role:</label>
                     <input type="text"

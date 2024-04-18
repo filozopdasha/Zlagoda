@@ -13,6 +13,14 @@ const CategoriesPage = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [popupCategory, setPopupCategory] = useState(null);
 
+    const [role, setRole] = useState('');
+    useEffect(() => {
+        const storedRole = localStorage.getItem('role');
+        if (storedRole) {
+            setRole(storedRole);
+        }
+    }, []);
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -97,9 +105,11 @@ const CategoriesPage = () => {
                 className="search-bar-categories"
             />
 
+            {role === "Manager" && (
             <button className="add-category">
                 <NavLink to="/add-category" className="add-category-text">Add Category</NavLink>
             </button>
+            )}
 
             <button className="sort add-category" onClick={() => handleSort("category_number")}>Sort by number</button>
 
@@ -146,10 +156,15 @@ const CategoriesPage = () => {
                     <div key={category.category_number} className="category-card">
                         <h3>{category.category_name}</h3>
                         <p>Category Number: {category.category_number}</p>
-                        <button className="delete-category" onClick={() => handleDeleteCategory(category.category_number)}>⛌</button>
+                        {role === "Manager" && (
+                            <button className="delete-category"
+                                    onClick={() => handleDeleteCategory(category.category_number)}>⛌</button>
+                        )}
+                        {role === "Manager" && (
                         <button className="edit-category" title="Edit product">
                             <NavLink to={"/categories/" + category.category_number} className="add-category-text">✎</NavLink>
                         </button>
+                        )}
                         <button className="show-products" onClick={() => handlePopup(category.category_number)}>Products</button>
                     </div>
                 ))}

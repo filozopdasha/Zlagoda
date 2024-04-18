@@ -39,10 +39,10 @@ form{
 }
 
 .input-field-login {
-    background-color: #e0e0da;
-    color: white;
+    background-color: rgba(102, 140, 196, 0.72);
+    color: #000000;
     padding: 10px 150px 10px 10px;
-    border: 2px solid #E0E0DAFF;
+    border: 2px solid #000000;
     transition: border-color 0.3s;
     outline: none;
     border-radius: 3px;
@@ -103,32 +103,16 @@ form{
     justify-content: space-between;
 }
 
-.create-account-button{
-    margin-top: 30px;
-    margin-bottom: 10px;
-    margin-right:100px;
-    color: rgb(86, 83, 83);
-    border: 2px solid #f1f1ec;
-    transition: border-color 0.3s;
-    outline: none;
-    border-radius: 1px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
+.error-message{
+    font-size: 30px;
+    font-family: "Copperplate Gothic Bold";
     font-weight: bold;
-    background-color: #f1f1ec;
-    width: 50%;
-    margin-left:40%;
+    color: #ef0909;
+    padding: 8px;
+    margin-top: -80%;
+    width: 100%;
+    margin-left: 20%;
 }
-
-
-.create-account-button:hover {
-    border-color: #f1f1ec;
-    border-width: 2px;
-}
-
 
 @media (min-width: 900px) and (max-width: 1199px) {
     .full-form {

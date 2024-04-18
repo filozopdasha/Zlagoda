@@ -137,7 +137,7 @@ const EditStoreProductsPage = () => {
                     />
                     <div className="action-buttons">
                         <button type="button" onClick={handleCancel}>Cancel</button>
-                        <button type="submit">Edit employee</button>
+                        <button type="submit">Edit Store Product</button>
                     </div>
                 </form>
             </div>

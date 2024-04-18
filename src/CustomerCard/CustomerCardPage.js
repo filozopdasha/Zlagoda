@@ -14,6 +14,14 @@ const CardsPage = () => {
     const [popupCard, setPopupCard] = useState(null);
     const [popupData, setPopupData] = useState({});
 
+    const [role, setRole] = useState('');
+    useEffect(() => {
+        const storedRole = localStorage.getItem('role');
+        if (storedRole) {
+            setRole(storedRole);
+        }
+    }, []);
+
     useEffect(() => {
         const fetchCards = async () => {
             try {
@@ -97,9 +105,11 @@ const CardsPage = () => {
                 className="search-bar-categories"
             />
 
+            {role === "Manager" && (
             <button className="add-category">
                 <NavLink to="/add-card" className="add-category-text">Add Card</NavLink>
             </button>
+            )}
 
             <button className="sort add-category" onClick={() => handleSort("card_number")}>Sort by number</button>
 
@@ -133,7 +143,9 @@ const CardsPage = () => {
                     <div key={card.card_number} className="category-card">
                         <h3>{card.cust_surname}</h3>
                         <p>Card Number: {card.card_number}</p>
-                        <button className="delete-category" onClick={() => handleDeleteCard(card.card_number)}>⛌</button>
+                        {role === "Manager" &&(
+                            <button className="delete-category" onClick={() => handleDeleteCard(card.card_number)}>⛌</button>
+                        )}
                         <button className="edit-category" title="Edit product">
                             <NavLink to={"/card/" + card.card_number} className="add-category-text">✎</NavLink>
                         </button>

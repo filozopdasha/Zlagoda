@@ -15,6 +15,14 @@ const CheckPage = () => {
     const [endDate, setEndDate] = useState("");
     const [totalSales, setTotalSales] = useState(0);
 
+    const [role, setRole] = useState('');
+    useEffect(() => {
+        const storedRole = localStorage.getItem('role');
+        if (storedRole) {
+            setRole(storedRole);
+        }
+    }, []);
+
     const fetchChecks = async () => {
         try {
             let url = `http://localhost:8081/get-checks?sortBy=${"check_number"}&sortOrder=${"ASC"}`;
@@ -53,7 +61,6 @@ const CheckPage = () => {
                 let total = 0;
                 salesdata.forEach(sale => {
                     total += sale.selling_price * sale.product_number;
-                    console.log(sale.selling_price)
                 });
                 setTotalCheckPrice(total);
             } catch (error) {
@@ -187,9 +194,11 @@ const CheckPage = () => {
                 onChange={handleSearch}
                 className="search-bar-categories"
             />
+            {role === "Cashier" && (
             <button className="add-check-button">
                 <NavLink to="/add-check" className="add-employee-text">Add Check</NavLink>
             </button>
+            )}
             <div>
                 <input
                     type="text"
@@ -296,12 +305,26 @@ const CheckPage = () => {
                         <h3>Check № {check.check_number}</h3>
                         <p className="print-date">{check.print_date}</p>
                         <p className="sum-total">{check.sum_total} грн</p>
-                        <button className="delete-check" onClick={() => handleDelete(check.check_number)}>⛌</button>
+                        {role === "Manager" && (
+                            <button className="delete-check" onClick={() => handleDelete(check.check_number)}>⛌</button>
+                        )}
                         <button className="open-check" onClick={() => handleOpenPopup(check)}>⇲</button>
                     </div>
                 ))}
             </div>
+            {filteredChecks.length === 0 && <div className="error-message"><h2 >No checks found.</h2></div>}
+            {filteredChecks.length !== 0 &&
+                <footer className="footer">
+                    <div className="contact-info">
+                        <hr></hr>
+                        <p>Contact us:</p>
+                        <p>Email: yu.skip@ukma.edu.ua</p>
+                        <p>Email: d.filozop@ukma.edu.ua</p>
+                        <p>Phone: +1234567890</p>
+                    </div>
+                </footer>}
         </div>
+
     );
 };
 

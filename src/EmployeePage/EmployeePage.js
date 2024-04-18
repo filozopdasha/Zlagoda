@@ -14,6 +14,20 @@ const EmployeePage = () => {
     const [popupEmployee, setPopupEmployee] = useState(null);
     const [showCashiers, setShowCashiers] = useState(false);
 
+    const [role, setRole] = useState('');
+    const [id, setId] = useState('');
+
+    useEffect(() => {
+        const storedRole = localStorage.getItem('role');
+        const storedId = localStorage.getItem('id')
+        if (storedRole) {
+            setRole(storedRole);
+        }
+        if (storedId){
+            setId(storedId);
+        }
+    }, []);
+
     useEffect(() => {
         const fetchEmployee = async () => {
             try {
@@ -83,14 +97,23 @@ const EmployeePage = () => {
     let filteredEmployee = employee ? employee.filter(employee =>
         (showCashiers ? employee.empl_role === "Cashier" : true) &&
         (employee.empl_surname.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
-            employee.category_number === parseInt(searchQuery))
+            employee.category_number === parseInt(searchQuery)) &&
+        (role === "Cashier" ? employee.id_employee === id : true)
     ) : [];
 
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
 
     return (
         <div className="employees page">
             <MenuBar/>
             {fetchError && (<p>{fetchError}</p>)}
+            {role === "Manager" && (
             <input
                 type="text"
                 placeholder="Search employee by surname..."
@@ -98,13 +121,18 @@ const EmployeePage = () => {
                 onChange={handleSearch}
                 className="search-bar-employee"
             />
+            )}
             <div className="add-employee-container">
+                {role === "Manager" && (
                 <button className="add-employee-button">
                     <NavLink to="/add-employee" className="add-employee-text">Add Employee</NavLink>
                 </button>
+                )}
+                {role === "Manager" && (
                 <button className="toggle-cashiers-button add-employee-button" onClick={handleToggleCashiers}>
                     {showAllButtonText}
                 </button>
+                )}
             </div>
 
 
@@ -135,6 +163,8 @@ const EmployeePage = () => {
                 </>
             )}
 
+            {role === "Manager" && (
+                <>
             {filteredEmployee.length > 0 && (
                 <div className="employees">
                     <div style={{width: '80%', margin: '0 auto'}}>
@@ -163,8 +193,12 @@ const EmployeePage = () => {
                                     onClick={() => handleSort("street")}>Street
                                 </th>
 
-                                <th className="title-employee" title="⛌"></th>
+                                {role === "Manager" && (
+                                    <th className="title-employee" title="⛌"></th>
+                                )}
+                                {role === "Manager" && (
                                 <th className="title-employee" title="✎"></th>
+                                )}
                             </tr>
                             </thead>
                             <tbody>
@@ -178,13 +212,16 @@ const EmployeePage = () => {
                                     <td className="employee-data">{employee.phone_number}</td>
                                     <td className="employee-data">{employee.city}</td>
                                     <td className="employee-data">{employee.street}</td>
-                                    <td className="employee-data delete-employee">
-                                        <button
-                                            className="delete-employee title-employee"
-                                            title="Remove employee"
-                                            onClick={() => handleDeleteEmployee(employee.id_employee)}>⛌
-                                        </button>
-                                    </td>
+                                    {role === "Manager" && (
+                                        <td className="employee-data delete-employee">
+                                            <button
+                                                className="delete-employee title-employee"
+                                                title="Remove employee"
+                                                onClick={() => handleDeleteEmployee(employee.id_employee)}>⛌
+                                            </button>
+                                        </td>
+                                    )}
+                                    {role === "Manager" && (
                                     <td className="employee-data edit-employee">
                                         <button
                                             className="edit-employee title-employee"
@@ -193,6 +230,7 @@ const EmployeePage = () => {
                                                      className="add-employee-text">✎</NavLink>
                                         </button>
                                     </td>
+                                    )}
                                 </tr>
                             ))}
                             </tbody>
@@ -200,6 +238,28 @@ const EmployeePage = () => {
                     </div>
                 </div>
             )}
+            </>
+            )}
+            {role === "Cashier" && (
+                <>
+                    {filteredEmployee.length === 0 && <div className="error-message"><h2>No products found.</h2></div>}
+                    {filteredEmployee.length !== 0 && filteredEmployee.map(employee => (
+                        <div key={employee.id_employee} className="profile-container">
+                            <div className="profile-details">
+                                <h2>{employee.empl_name} {employee.empl_patronymic} {employee.empl_surname}</h2>
+                                <p><strong>ID:</strong> {employee.id_employee}</p>
+                                <p><strong>Role:</strong> {employee.empl_role}</p>
+                                <p><strong>Salary:</strong> {employee.salary}</p>
+                                <p><strong>Date of Birth:</strong> {formatDate(employee.date_of_birth)}</p>
+                                <p><strong>Date of Start:</strong> {formatDate(employee.date_of_start)}</p>
+                                <p><strong>Phone Number:</strong> {employee.phone_number}</p>
+                                <p><strong>Address:</strong> {employee.city}, {employee.street}, {employee.zip_code}</p>
+                            </div>
+                        </div>
+                    ))}
+                </>
+            )}
+
             {filteredEmployee.length === 0 && <div className="error-message"><h2>No products found.</h2></div>}
             {filteredEmployee.length !== 0 &&
                 <footer className="footer">

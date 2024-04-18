@@ -43,6 +43,8 @@ function App() {
             <Route path="/store-products" element={<StoreProductsPage />} />
             <Route path="/edit-product/:id" element={<EditStoreProductsPage/>} />
             <Route path="/add-store-product" element={<AddStoreProductPage/>} />
+
+
         </Routes>
       </BrowserRouter>
   );
