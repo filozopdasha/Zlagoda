@@ -12,7 +12,9 @@ const StoreProductsPage = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [showPopup, setShowPopup] = useState(false);
+    const [totalSales, setTotalSales] = useState(false);
     const [popupProduct, setPopupProduct] = useState(null);
+    const [showOnlySales, setShowOnlySales] = useState(null); // Changed initial state to null
     const navigate = useNavigate();
 
     const [role, setRole] = useState('');
@@ -25,11 +27,17 @@ const StoreProductsPage = () => {
 
     useEffect(() => {
         fetchStoreProducts();
-    }, [sortBy, sortOrder]);
+    }, [sortBy, sortOrder, showOnlySales]);
 
     const fetchStoreProducts = async () => {
         try {
-            const response = await fetch(`http://localhost:8081/get-store-products?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+            let url = `http://localhost:8081/get-store-products?sortBy=${sortBy}&sortOrder=${sortOrder}`;
+            if (showOnlySales === true) {
+                url = `http://localhost:8081/get-store-products-with-sales?sortBy=${sortBy}&sortOrder=${sortOrder}`;
+            } else if (showOnlySales === false) {
+                url = `http://localhost:8081/get-store-products-without-sales?sortBy=${sortBy}&sortOrder=${sortOrder}`; // Query for products without sales
+            }
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Could not fetch the store products');
             }
@@ -88,6 +96,18 @@ const StoreProductsPage = () => {
         navigate("/add-product");
     };
 
+    const handleSearchByDatePeriod = () => {
+        if (startDate && endDate) {
+            fetchProductsByDatePeriod(startDate, endDate);
+            setTotalSales(true);
+        }else if(!startDate && !endDate){
+            fetchStoreProducts();
+            setTotalSales(false);
+        } else {
+            setFetchError("Please select both start and end dates.");
+        }
+    };
+
     const fetchProductsByDatePeriod = async (startDate, endDate) => {
         try {
             const response = await fetch(`http://localhost:8081/get-store-products-by-date-period?startDate=${startDate}&endDate=${endDate}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
@@ -103,23 +123,7 @@ const StoreProductsPage = () => {
         }
     };
 
-    const handleSearchByDatePeriod = () => {
-        if (startDate && endDate) {
-            fetchProductsByDatePeriod(startDate, endDate);
-        }else if(!startDate && !endDate){
-            fetchStoreProducts();
-        } else {
-            setFetchError("Please select both start and end dates.");
-        }
-    };
-
-    let filteredProducts = storeProducts ? Array.from(new Set(storeProducts.filter(product =>
-        product.upc.includes(searchQuery)
-    ).map(product => product.upc))) : [];
-
-    filteredProducts = filteredProducts.map(productUPC =>
-        storeProducts.find(product => product.upc === productUPC)
-    );
+    let filteredProducts = storeProducts ? [...storeProducts] : [];
 
     return (
         <div className="store-products page">
@@ -133,9 +137,9 @@ const StoreProductsPage = () => {
                 className="search-bar-store-categories"
             />
             {role === "Manager" && (
-            <button className="add-store-button">
-                <NavLink to="/add-store-product" className="add-employee-text">Add Store Product</NavLink>
-            </button>
+                <button className="add-store-button">
+                    <NavLink to="/add-store-product" className="add-employee-text">Add Store Product</NavLink>
+                </button>
             )}
             <div className="date-search">
                 <input
@@ -154,6 +158,12 @@ const StoreProductsPage = () => {
                 />
                 <button onClick={handleSearchByDatePeriod} className="search-condition-button">Search by Date Period</button>
             </div>
+            {/* Button to filter by sales */}
+            {!totalSales && (<div className="for-sales">
+                <button onClick={() => setShowOnlySales(true)} className="add-employee-button">Sales</button>
+                <button onClick={() => setShowOnlySales(false)} className="add-employee-button">No Sales</button>
+                <button onClick={() => setShowOnlySales(null)} className="add-employee-button">All</button>
+            </div>)}
             {showPopup && popupProduct && (
                 <>
                     <div className="overlay" onClick={handleClosePopup}></div>
@@ -185,21 +195,24 @@ const StoreProductsPage = () => {
                         <table className="store-table">
                             <thead>
                             <tr>
-                                <th className="title" title="Sort by UPC" onClick={() => handleSort("upc")}>UPC</th>
-                                <th className="title" title="Sort by Product Name"
+                                    <th className="title" title="Sort by UPC" onClick={() => handleSort("upc")}>UPC</th>
+                                  <th className="title" title="Sort by Product Name"
                                     onClick={() => handleSort("product_name")}>Product Name
                                 </th>
-                                <th className="title" title="Sort by Product ID"
+                                {!totalSales && ( <th className="title" title="Sort by Product ID"
                                     onClick={() => handleSort("id_product")}>Product ID
-                                </th>
-                                <th className="title" title="Sort by Products Number"
+                                </th>)}
+                                {!totalSales && (<th className="title" title="Sort by Products Number"
                                     onClick={() => handleSort("products_number")}>Products Number
-                                </th>
-                                <th className="title" title="Sort by Selling Price"
+                                </th>)}
+                                {totalSales && (<th className="title" title="Sort by Total Units Sold"
+                                                     onClick={() => handleSort("total_units_sold")}>Total Units Sold
+                                </th>)}
+                                {!totalSales && (  <th className="title" title="Sort by Selling Price"
                                     onClick={() => handleSort("selling_price")}>Selling Price
-                                </th>
-                                {role === "Manager" && (<th className="title" title="Actions"></th>)}
-                                {role === "Manager" && (<th className="title" title="Actions"></th>)}
+                                </th>)}
+                                {role === "Manager" &&  !totalSales && (<th className="title" title="Actions"></th>)}
+                                {role === "Manager" && !totalSales &&(<th className="title" title="Actions"></th>)}
 
                             </tr>
                             </thead>
@@ -214,30 +227,32 @@ const StoreProductsPage = () => {
                                             <div className="sale-sign">Sale</div>
                                         )}
                                     </td>
-                                    <td className="product-data"
-                                        onClick={() => handlePopup(product.upc)}>{product.id_product}</td>
-                                    <td className="product-data"
-                                        onClick={() => handlePopup(product.upc)}>{product.products_number}</td>
-                                    <td className="product-data"
-                                        onClick={() => handlePopup(product.upc)}>{product.selling_price}</td>
-                                    {role === "Manager" && (
-                                    <td className="product-data actions">
-                                        <button
-                                            className="edit-product title"
-                                            title="Edit product"
-                                            onClick={() => handleEditProduct(product.upc)}>
-                                            <NavLink to={"/store-products/" + product.upc}
-                                                     className="add-product-text">✎</NavLink>
-                                        </button>
-                                    </td>)}
-                                    {role === "Manager" && (
-                                    <td className="product-data actions">
-                                        <button
-                                            className="delete-product title"
-                                            title="Remove product"
-                                            onClick={() => handleDeleteProduct(product.upc)}>⛌
-                                        </button>
-                                    </td>)}
+                                    {!totalSales && (  <td className="product-data"
+                                        onClick={() => handlePopup(product.upc)}>{product.id_product}</td>)}
+                                    {!totalSales && (  <td className="product-data"
+                                        onClick={() => handlePopup(product.upc)}>{product.products_number}</td>)}
+                                    {!totalSales && ( <td className="product-data"
+                                        onClick={() => handlePopup(product.upc)}>{product.selling_price}</td>)}
+                                    {totalSales && (  <td className="product-data"
+                                                           onClick={() => handlePopup(product.upc)}>{product.total_units_sold}</td>)}
+                                    {role === "Manager" && !totalSales &&(
+                                        <td className="product-data actions">
+                                            <button
+                                                className="edit-product title"
+                                                title="Edit product"
+                                                onClick={() => handleEditProduct(product.upc)}>
+                                                <NavLink to={"/store-products/" + product.upc}
+                                                         className="add-product-text">✎</NavLink>
+                                            </button>
+                                        </td>)}
+                                    {role === "Manager" && !totalSales &&(
+                                        <td className="product-data actions">
+                                            <button
+                                                className="delete-product title"
+                                                title="Remove product"
+                                                onClick={() => handleDeleteProduct(product.upc)}>⛌
+                                            </button>
+                                        </td>)}
                                 </tr>
                             ))}
                             </tbody>

@@ -589,21 +589,47 @@ app.get('/get-store-products-by-date-period', (req, res) => {
     const { startDate, endDate } = req.query;
 
     db.any(`
-        SELECT
-            p.*, sp.upc, sp.upc_prom, sp.selling_price, sp.promotional_product, sp.products_number,
-            c.print_date
-        FROM
-            "Product" p
-        INNER JOIN
-            "Store_Product" sp ON p.id_product = sp.id_product
-        INNER JOIN
-            "Sale" s ON sp.upc = s.upc
-        INNER JOIN
-                
-            "Check" c ON s.check_number = c.check_number
-        WHERE
-           DATE(c.print_date )>= $1 AND DATE(c.print_date) <= $2
+        SELECT sp.upc, p.product_name, SUM(s.product_number) AS total_units_sold
+        FROM (("Sale" s INNER JOIN "Store_Product" sp ON s.UPC = sp.UPC)
+            INNER JOIN "Product" p ON sp.id_product = p.id_product)
+                 INNER JOIN "Check" c ON s.check_number = c.check_number
+        WHERE c.print_date >= DATE($1) AND c.print_date <= Date($2)
+        GROUP BY p.product_name, sp.upc
     `, [startDate, endDate])
+        .then(products => {
+            res.json(products);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.get('/get-store-products-with-sales', (req, res) => {
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`
+        SELECT p.*, sp.upc, sp.upc_prom, sp.selling_price, sp.promotional_product, sp.products_number 
+        FROM "Product" p 
+        INNER JOIN "Store_Product" sp ON p.id_product = sp.id_product 
+        WHERE sp.upc_prom IS NOT NULL -- Filter products with sales (green popup)
+        ORDER BY ${orderBy};
+    `)
+        .then(products => {
+            res.json(products);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.get('/get-store-products-without-sales', (req, res) => {
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`
+        SELECT p.*, sp.upc, sp.upc_prom, sp.selling_price, sp.promotional_product, sp.products_number 
+        FROM "Product" p 
+        INNER JOIN "Store_Product" sp ON p.id_product = sp.id_product 
+        WHERE sp.upc_prom IS NULL -- Filter products without sales (no green popup)
+        ORDER BY ${orderBy};
+    `)
         .then(products => {
             res.json(products);
         })

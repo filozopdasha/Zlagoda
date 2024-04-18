@@ -147,6 +147,10 @@ const CheckPage = () => {
             setFetchError("Please, fill in all fields correctly!")
         }
     };
+    const handlePrint = () => {
+        window.print();
+    };
+
     const showTotalSum = (e) => {
         if(totalSales === 0) {
             const totalSalesAmount = checks.reduce((total, check) => total + parseFloat(check.sum_total), 0);
@@ -185,7 +189,9 @@ const CheckPage = () => {
 
     return (
         <div className="check page">
-            <MenuBar/>
+            <div id="menuBarWrapper">
+                <MenuBar/>
+            </div>
             {fetchError && (<p>{fetchError}</p>)}
             <input
                 type="text"
@@ -269,7 +275,7 @@ const CheckPage = () => {
                                     </div>
                                 ))}
                             </div>
-                            {selectedCheck.card_number &&(
+                            {selectedCheck.card_number && (
                                 <div>
                                     <h3 className="delimiter">*****************************************</h3>
                                     <div className="item">
@@ -292,9 +298,12 @@ const CheckPage = () => {
                                     <p>VAT(included in above total)</p>
                                     <p>{selectedCheck.vat} ₴</p>
                                 </div>
+                                <button onClick={handlePrint} className="print-button">Print</button>
+
                             </div>
                             <div className="zigzag-bottom"></div>
                         </div>
+
                     </div>
                 </div>
             )}
