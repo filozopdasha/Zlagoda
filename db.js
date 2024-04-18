@@ -666,6 +666,7 @@ app.get('/get-work-days-in-month', (req, res) =>{
             FROM "Employee" e
                      LEFT JOIN "Check" c ON e.id_employee = c.id_employee
             AND EXTRACT(MONTH FROM print_date) = $1
+            WHERE e.empl_role='Cashier'
             GROUP BY e.id_employee, empl_surname, empl_name, phone_number, city, street
             ORDER BY worked_days DESC`, [month])
         .then(result =>{
