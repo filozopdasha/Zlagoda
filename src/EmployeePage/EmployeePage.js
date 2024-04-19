@@ -24,6 +24,37 @@ const EmployeePage = () => {
 
     const [role, setRole] = useState('');
     const [id, setId] = useState('');
+    const [showTopCashiers, setShowTopCashiers] = useState(false); // New state for top cashiers
+
+    useEffect(() => {
+        if (showTopCashiers) {
+            fetchTopCashiers();
+        } else {
+            fetchEmployee();
+        }
+    }, [showTopCashiers]);
+
+    const fetchTopCashiers = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/find-cashier-serving-all-customers-with-card`);
+            if (!response.ok) {
+                throw new Error('Could not fetch top cashiers');
+            }
+            const data = await response.json();
+            setEmployee(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setEmployee(null);
+        }
+    };
+
+    const handleToggleTopCashiers = () => {
+        setShowTopCashiers(prevState => !prevState);
+    };
+
+    const showTopCashiersButtonText = showTopCashiers ? "Show All Employees" : "Show Top Cashiers";
+
 
     useEffect(() => {
         const storedRole = localStorage.getItem('role');
@@ -200,6 +231,10 @@ const EmployeePage = () => {
 
                     <button className="add-employee-button">
                         <NavLink to="/add-employee" className="add-employee-text">Add Employee</NavLink>
+                    </button>
+
+                    <button className="toggle-cashiers-button add-employee-button" onClick={handleToggleTopCashiers}>
+                        {showTopCashiersButtonText} {/* This is the button for toggling top cashiers */}
                     </button>
 
                     <button className="toggle-cashiers-button add-employee-button" onClick={handleToggleCashiers}>

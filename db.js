@@ -97,6 +97,30 @@ app.post('/add-employee', async (req, res) => {
         res.status(500).json({ error: 'Error adding employee: ' + error.message });
     }
 });
+//////////////////////
+app.get('/find-cashier-serving-all-customers-with-card', async (req, res) => {
+    try {
+        const query = `
+            SELECT id_employee, empl_surname, empl_name, empl_role, phone_number, city, street
+            FROM "Employee" e
+            WHERE NOT EXISTS (
+                SELECT card_number
+                FROM "Customer_Card"
+                WHERE NOT EXISTS (
+                    SELECT check_number
+                    FROM "Check" c
+                    WHERE c.id_employee = e.id_employee
+                    AND c.card_number = "Customer_Card".card_number
+                )
+            )
+            AND empl_role = 'Cashier';`;
+
+        const cashiers = await db.any(query);
+        res.json(cashiers);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 /**
  * CATEGORIES***********************************************************************************************************
@@ -463,6 +487,25 @@ app.get('/get-card-info/:id', (req, res) =>{
             res.status(500).json({error:error.message});
         });
 });
+app.get('/discount-card-usage-by-month', (req, res) => {
+    console.log('Fetching discount card usage by month...');
+    db.any(`SELECT EXTRACT(MONTH FROM checks.date) AS Місяць, EXTRACT(YEAR FROM checks.date) AS Рік, COUNT(DISTINCT customer_cards.card_number) AS Кількість_клієнтів
+    FROM "Check" checks
+    JOIN "Customer_Card" customer_cards ON checks.card_number = customer_cards.card_number
+    WHERE checks.card_number IS NOT NULL
+    GROUP BY EXTRACT(MONTH FROM checks.date), EXTRACT(YEAR FROM checks.date);`)
+        .then((result) => {
+            console.log('Successfully fetched discount card usage by month:', result);
+            res.json(result);
+        })
+        .catch(error => {
+            console.error('Error fetching discount card usage by month:', error.message);
+            res.status(500).json({ error: 'Error fetching discount card usage by month' });
+        });
+});
+
+
+
 
 
 

@@ -13,6 +13,7 @@ const CardsPage = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [popupCard, setPopupCard] = useState(null);
     const [popupData, setPopupData] = useState({});
+    const [selectedMonth, setSelectedMonth] = useState(""); // Add state for selected month
 
     const [role, setRole] = useState('');
     useEffect(() => {
@@ -22,14 +23,22 @@ const CardsPage = () => {
         }
     }, []);
 
+    const handleMonthChange = (e) => {
+        const selectedMonthValue = e.target.value;
+        console.log("Selected month:", selectedMonthValue); // Debugging statement
+        setSelectedMonth(selectedMonthValue); // Update selected month
+    };
+
     useEffect(() => {
+        console.log("Fetching cards with selected month:", selectedMonth); // Debugging statement
         const fetchCards = async () => {
             try {
-                const response = await fetch(`http://localhost:8081/get-card?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+                const response = await fetch(`http://localhost:8081/get-card?sortBy=${sortBy}&sortOrder=${sortOrder}&month=${selectedMonth}`); // Include selected month in the API call
                 if (!response.ok) {
                     throw new Error('Could not fetch the cards');
                 }
                 const data = await response.json();
+                console.log("Fetched cards:", data); // Debugging statement
                 setCards(data);
                 setFetchError(null);
             } catch (error) {
@@ -39,7 +48,8 @@ const CardsPage = () => {
         };
 
         fetchCards();
-    }, [sortBy, sortOrder]);
+    }, [sortBy, sortOrder, selectedMonth]); // Include selectedMonth in the dependencies array
+
 
     const handleDeleteCard = async (cardNumber) => {
         try {
@@ -72,6 +82,17 @@ const CardsPage = () => {
         card.card_number.toString().startsWith(searchQuery)
     ) : [];
 
+// Apply additional filtering based on selected month
+    if (selectedMonth !== "") {
+        filteredCards = filteredCards.filter(card => {
+            const cardMonth = new Date(card.date).getMonth() + 1; // Adding 1 to get month index starting from 1
+            const formattedMonth = ("0" + cardMonth).slice(-2); // Format the month to two digits
+            return formattedMonth === selectedMonth; // Filter for the selected month
+        });
+    }
+
+
+
     const handlePopup = async (cardNumber) => {
         setShowPopup(true);
         try {
@@ -92,6 +113,8 @@ const CardsPage = () => {
         setPopupData({});
     };
 
+
+
     return (
         <div className="categories page">
             <MenuBar />
@@ -106,14 +129,30 @@ const CardsPage = () => {
             />
 
             {role === "Manager" && (
-            <button className="add-category">
-                <NavLink to="/add-card" className="add-category-text">Add Card</NavLink>
-            </button>
+                <button className="add-category">
+                    <NavLink to="/add-card" className="add-category-text">Add Card</NavLink>
+                </button>
             )}
 
             <button className="sort add-category" onClick={() => handleSort("card_number")}>Sort by number</button>
 
             <button className="sort add-category" onClick={() => handleSort("cust_surname")}>Sort by Surname</button>
+
+            <select onChange={handleMonthChange} value={selectedMonth} className= "search-bar-categories">
+                <option value="">All Months</option>
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
 
             {showPopup && Object.keys(popupData).map(cardNumber => (
                 <>
@@ -143,7 +182,7 @@ const CardsPage = () => {
                     <div key={card.card_number} className="category-card">
                         <h3>{card.cust_surname}</h3>
                         <p>Card Number: {card.card_number}</p>
-                        {role === "Manager" &&(
+                        {role === "Manager" && (
                             <button className="delete-category" onClick={() => handleDeleteCard(card.card_number)}>⛌</button>
                         )}
                         <button className="edit-category" title="Edit product">
