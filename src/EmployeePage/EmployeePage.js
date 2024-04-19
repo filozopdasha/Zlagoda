@@ -16,15 +16,15 @@ const EmployeePage = () => {
 
 
 
-    const [showBest, setShowBest] = useState(false);//
-    const [inputActive, setInputActive] = useState(false);//
-    const [inputText, setInputText] = useState('');//
-    const [shifts, setShifts] = useState(false);//
+    const [showBest, setShowBest] = useState(false);
+    const [inputActive, setInputActive] = useState(false);
+    const [inputText, setInputText] = useState('');
+    const [shifts, setShifts] = useState(false);
 
 
     const [role, setRole] = useState('');
     const [id, setId] = useState('');
-    const [showTopCashiers, setShowTopCashiers] = useState(false); // New state for top cashiers
+    const [showTopCashiers, setShowTopCashiers] = useState(false);
 
     useEffect(() => {
         if (showTopCashiers) {
@@ -133,7 +133,7 @@ const EmployeePage = () => {
     };
     const showAllButtonText = showCashiers ? "Show All" : "Show Cashiers";
 
-//************************************************
+
     const fetchBestCashiers = async () => {
         try {
             const response = await fetch(`http://localhost:8081/get-best-worker`);
@@ -162,7 +162,7 @@ const EmployeePage = () => {
 
     const fetchWorkDays = async () => {
         try {
-            const month = inputText; // Assuming inputText contains the month
+            const month = inputText;
             const response = await fetch(`http://localhost:8081/get-work-days-in-month?month=${month}`);
             if (!response.ok) {
                 throw new Error('Could not fetch shifts');
@@ -234,7 +234,7 @@ const EmployeePage = () => {
                     </button>
 
                     <button className="toggle-cashiers-button add-employee-button" onClick={handleToggleTopCashiers}>
-                        {showTopCashiersButtonText} {/* This is the button for toggling top cashiers */}
+                        {showTopCashiersButtonText} {}
                     </button>
 
                     <button className="toggle-cashiers-button add-employee-button" onClick={handleToggleCashiers}>
