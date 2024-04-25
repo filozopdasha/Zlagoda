@@ -718,8 +718,10 @@ app.get('/discount-card-usage-by-month', async (req, res) => {
             SELECT cc.card_number, cc.cust_surname, cc.cust_name, cc.cust_patronymic, EXTRACT(MONTH FROM c.print_date) AS month
             FROM "Check" c 
             INNER JOIN "Customer_Card" cc ON c.card_number = cc.card_number
+            INNER JOIN "Sale" s ON c.check_number = s.check_number
             WHERE cc.percent > 0 AND EXTRACT(MONTH FROM c.print_date) = $1
-            GROUP BY cc.card_number, cc.cust_surname, cc.cust_name, cc.cust_patronymic, EXTRACT(MONTH FROM c.print_date);
+            GROUP BY cc.card_number, cc.cust_surname, cc.cust_name, cc.cust_patronymic, EXTRACT(MONTH FROM c.print_date)
+            HAVING COUNT(s.check_number) > 0; 
         `, [selectedMonth]);
 
         res.json(queryResult);
@@ -727,6 +729,8 @@ app.get('/discount-card-usage-by-month', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+
 
 /*
 * *
