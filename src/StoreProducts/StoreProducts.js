@@ -107,6 +107,9 @@ const StoreProductsPage = () => {
             setFetchError("Please select both start and end dates.");
         }
     };
+    const handlePrint = () => {
+        window.print();
+    };
 
     const fetchProductsByDatePeriod = async (startDate, endDate) => {
         try {
@@ -127,7 +130,9 @@ const StoreProductsPage = () => {
 
     return (
         <div className="store-products page">
+            <div id="menuBarWrapper">
             <MenuBar/>
+            </div>
             {fetchError && (<p>{fetchError}</p>)}
             <input
                 type="text"
@@ -163,10 +168,13 @@ const StoreProductsPage = () => {
                 <button onClick={() => setShowOnlySales(true)} className="add-employee-button">Sales</button>
                 <button onClick={() => setShowOnlySales(false)} className="add-employee-button">No Sales</button>
                 <button onClick={() => setShowOnlySales(null)} className="add-employee-button">All</button>
-            </div>)}
+                <button onClick={handlePrint} className="print-button">Print</button>
+
+            </div>)
+            }
             {showPopup && popupProduct && (
                 <>
-                    <div className="overlay" onClick={handleClosePopup}></div>
+                <div className="overlay" onClick={handleClosePopup}></div>
                     <div className="popup-container">
                         <div className="popup">
                             <div className="popup-content">

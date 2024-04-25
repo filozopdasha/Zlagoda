@@ -98,3 +98,30 @@
     position: relative;
 }
 
+.print-button:hover {
+    background-color: #45a049;
+}
+@media print {
+    #menuBarWrapper {
+        display: none;
+    }
+
+    .print-button {
+        display: none;
+    }
+    button, input, select, footer{
+        display:none;
+    }
+}
+@media print {
+    .category-cards {
+        display: none;
+    }
+    .hidden-table {
+        display: block !important;
+    }
+}
+.hidden-table .product-data{
+    font-size:8px;
+}
+

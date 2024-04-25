@@ -167,3 +167,16 @@
     width: 100%;
 
 }
+
+.print-button:hover {
+    background-color: #45a049;
+}
+@media print {
+    #menuBarWrapper {
+        display: none;
+    }
+
+    .print-button, button, input, footer {
+        display: none;
+    }
+}

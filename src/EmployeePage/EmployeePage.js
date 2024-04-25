@@ -13,6 +13,8 @@ const EmployeePage = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [popupEmployee, setPopupEmployee] = useState(null);
     const [showCashiers, setShowCashiers] = useState(false);
+    const [showHiddenTable, setShowHiddenTable] = useState(false);
+
 
 
 
@@ -197,6 +199,11 @@ const EmployeePage = () => {
         fetchEmployee()
     }
 
+    const handlePrint = () => {
+        setShowHiddenTable(true);
+        window.print();
+        setShowHiddenTable(false);
+    };
 
     let filteredEmployee = employee ? employee.filter(employee =>
         (showCashiers ? employee.empl_role === "Cashier" : true) &&
@@ -215,7 +222,9 @@ const EmployeePage = () => {
 
     return (
         <div className="employees page">
+            <div id="menuBarWrapper">
             <MenuBar/>
+            </div>
             {fetchError && (<p>{fetchError}</p>)}
             {role === "Manager" && (
             <input
@@ -264,12 +273,13 @@ const EmployeePage = () => {
                     {inputActive && (
                         <button className="add-employee-button" onClick={handleCancelSearchMonth}>Cancel</button>
                     )}
+                    <button onClick={handlePrint} className="print-button">Print</button>
                 </div>)}
 
 
             {showPopup && popupEmployee && (
                 <>
-                    <div className="overlay"></div>
+                <div className="overlay"></div>
                     <div className="popup-container">
                         <div className="popup">
                             <div className="popup-content">
@@ -410,6 +420,59 @@ const EmployeePage = () => {
                         <p>Phone: +1234567890</p>
                     </div>
                 </footer>}
+            <div className="hidden-table" style={{display: showHiddenTable ? 'block' : 'none'}}>
+                <table>
+                    <thead>
+                    <tr>
+                        <th className="title-employee">ID
+                        </th>
+                        <th className="title-employee">Surname
+                        </th>
+                        <th className="title-employee">Name
+                        </th>
+                        <th className="title-employee">Patronymic
+                        </th>
+                        <th className="title-employee">Salary
+                        </th>
+                        <th className="title-employee">Date of Birth
+                        </th>
+                        <th className="title-employee">Date of Start
+                        </th>
+                        <th className="title-employee">Employee role
+                        </th>
+                        <th className="title-employee">Phone Number
+                        </th>
+                        <th className="title-employee">City
+                        </th>
+                        <th className="title-employee">Street
+                        </th>
+                        <th className="title-employee">Zip Code
+                        </th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {filteredEmployee.map(employee => (
+                        <tr key={employee.id_employee}>
+                            <td className="employee-data"
+                                onClick={() => handlePopup(employee.id_employee)}>{employee.id_employee}</td>
+                            <td className="employee-data">{employee.empl_surname}</td>
+                            <td className="employee-data">{employee.empl_name}</td>
+                            <td className="employee-data">{employee.empl_patronymic}</td>
+                            <td className="employee-data">{employee.salary}</td>
+                            <td className="employee-data">{employee.date_of_birth}</td>
+                            <td className="employee-data">{employee.date_of_start}</td>
+                            <td className="employee-data">{employee.empl_role}</td>
+                            <td className="employee-data">{employee.phone_number}</td>
+                            <td className="employee-data">{employee.city}</td>
+                            <td className="employee-data">{employee.street}</td>
+                            <td className="employee-data">{employee.zip_code}</td>
+
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

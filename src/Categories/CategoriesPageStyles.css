@@ -99,4 +99,21 @@
     position: relative;
     margin-left: 10%;
 }
+.print-button:hover {
+    background-color: #45a049;
+}
+@media print {
+    #menuBarWrapper {
+        display: none;
+    }
 
+    .print-button {
+        display: none;
+    }
+    button{
+        display:none;
+    }
+    input, footer{
+        display:none;
+    }
+}

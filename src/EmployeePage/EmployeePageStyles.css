@@ -237,3 +237,26 @@
 .for-sales{
     margin-left:9.5%;
 }
+
+.print-button:hover {
+    background-color: #45a049;
+}
+
+@media print {
+    #menuBarWrapper,
+    button,
+    input,
+    footer {
+        display: none !important;
+    }
+    .employee-table {
+        display: none !important;
+    }
+    .hidden-table {
+        display: block !important;
+    }
+}
+
+.hidden-table .employee-data {
+    font-size: 10px;
+}

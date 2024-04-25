@@ -51,6 +51,9 @@ const CategoriesPage = () => {
             console.error(error.message);
         }
     };
+    const handlePrint = () => {
+        window.print();
+    };
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
@@ -94,7 +97,9 @@ const CategoriesPage = () => {
 
     return (
         <div className="categories page">
-            <MenuBar />
+            <div id="menuBarWrapper">
+            <MenuBar/>
+            </div>
             {fetchError && (<p>{fetchError}</p>)}
 
             <input
@@ -106,15 +111,16 @@ const CategoriesPage = () => {
             />
 
             {role === "Manager" && (
-            <button className="add-category">
-                <NavLink to="/add-category" className="add-category-text">Add Category</NavLink>
-            </button>
+                <button className="add-category">
+                    <NavLink to="/add-category" className="add-category-text">Add Category</NavLink>
+                </button>
             )}
 
             <button className="sort add-category" onClick={() => handleSort("category_number")}>Sort by number</button>
 
             <button className="sort add-category" onClick={() => handleSort("category_name")}>Sort by name</button>
 
+            <button onClick={handlePrint} className="print-button">Print</button>
             {showPopup && (
                 <>
                     <div className="overlay"></div>
@@ -161,15 +167,18 @@ const CategoriesPage = () => {
                                     onClick={() => handleDeleteCategory(category.category_number)}>⛌</button>
                         )}
                         {role === "Manager" && (
-                        <button className="edit-category" title="Edit product">
-                            <NavLink to={"/categories/" + category.category_number} className="add-category-text">✎</NavLink>
-                        </button>
+                            <button className="edit-category" title="Edit product">
+                                <NavLink to={"/categories/" + category.category_number}
+                                         className="add-category-text">✎</NavLink>
+                            </button>
                         )}
-                        <button className="show-products" onClick={() => handlePopup(category.category_number)}>Products</button>
+                        <button className="show-products"
+                                onClick={() => handlePopup(category.category_number)}>Products
+                        </button>
                     </div>
                 ))}
             </div>
-            {filteredCategories.length === 0 && <div className="error-message"><h2 >No categories found.</h2></div>}
+            {filteredCategories.length === 0 && <div className="error-message"><h2>No categories found.</h2></div>}
             {filteredCategories.length !== 0 &&
                 <footer className="footer">
                     <div className="contact-info">

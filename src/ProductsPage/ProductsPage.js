@@ -52,6 +52,9 @@ const ProductsPage = () => {
             console.error('Error deleting product:', error.message);
         }
     };
+    const handlePrint = () => {
+        window.print();
+    };
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
@@ -74,8 +77,11 @@ const ProductsPage = () => {
 
     return (
         <div className="products page">
+            <div id="menuBarWrapper">
             <MenuBar />
+            </div>
             {fetchError && (<p>{fetchError}</p>)}
+
             <input
                 type="text"
                 placeholder="Search products by name or category number..."
@@ -83,28 +89,42 @@ const ProductsPage = () => {
                 onChange={handleSearch}
                 className="search-bar"
             />
+
+
             {role === "Manager" && (
             <button className="add-product">
                 <NavLink to="/add-product" className="add-product-text">Add Product</NavLink>
             </button>
+
             )}
+
             {filteredProducts.length > 0 && (
                 <div className="products">
                     <div style={{width: '80%', margin: '0 auto'}}>
+
                         <table className="product-table">
                             <thead>
                             <tr>
-                                <th className="title" title="Sort by ID" onClick={() => handleSort("id_product")}>ID</th>
-                                <th className="title" title="Sort by Product Name" onClick={() => handleSort("product_name")}>Product Name</th>
+                                <th className="title" title="Sort by ID" onClick={() => handleSort("id_product")}>ID
+                                </th>
+                                <th className="title" title="Sort by Product Name"
+                                    onClick={() => handleSort("product_name")}>Product Name
+                                </th>
                                 <th className="space"></th>
-                                <th className="title" title="Sort by Category Number" onClick={() => handleSort("category_number")}>Category Number</th>
-                                <th className="title" title="Sort by Manufacturer" onClick={() => handleSort("manufacturer")}>Manufacturer</th>
-                                <th className="title" title="Sort by Characteristics" onClick={() => handleSort("characteristics")}>Characteristics</th>
+                                <th className="title" title="Sort by Category Number"
+                                    onClick={() => handleSort("category_number")}>Category Number
+                                </th>
+                                <th className="title" title="Sort by Manufacturer"
+                                    onClick={() => handleSort("manufacturer")}>Manufacturer
+                                </th>
+                                <th className="title" title="Sort by Characteristics"
+                                    onClick={() => handleSort("characteristics")}>Characteristics
+                                </th>
                                 {role === "Manager" && (
-                                <th className="title" title="⛌"></th>
+                                    <th className="title" title="⛌"></th>
                                 )}
                                 {role === "Manager" && (
-                                <th className="title" title="✎"></th>
+                                    <th className="title" title="✎"></th>
                                 )}
                             </tr>
                             </thead>
@@ -127,18 +147,20 @@ const ProductsPage = () => {
                                         </td>
                                     )}
                                     {role === "Manager" && (
-                                    <td className="product-data edit-product">
-                                        <button
-                                            className="edit-product title"
-                                            title="Edit product">
-                                            <NavLink to={"/products/"+product.id_product} className="add-product-text">✎</NavLink>
-                                        </button>
-                                    </td>
+                                        <td className="product-data edit-product">
+                                            <button
+                                                className="edit-product title"
+                                                title="Edit product">
+                                                <NavLink to={"/products/" + product.id_product}
+                                                         className="add-product-text">✎</NavLink>
+                                            </button>
+                                        </td>
                                     )}
                                 </tr>
                             ))}
                             </tbody>
                         </table>
+                        <button onClick={handlePrint} className="print-button">Print</button>
                     </div>
                 </div>
             )}

@@ -10,8 +10,11 @@ const CardsPage = () => {
     const [sortBy, setSortBy] = useState("card_number");
     const [sortOrder, setSortOrder] = useState("asc");
     const [showPopup, setShowPopup] = useState(false);
+    const [showHiddenTable, setShowHiddenTable] = useState(false);
     const [popupData, setPopupData] = useState({});
     const [selectedMonth, setSelectedMonth] = useState("");
+
+
 
     const [role, setRole] = useState('');
     useEffect(() => {
@@ -109,6 +112,11 @@ const CardsPage = () => {
         }
     };
 
+    const handlePrint = () => {
+        setShowHiddenTable(true);
+        window.print();
+        setShowHiddenTable(false);
+    };
 
     const handleClosePopup = () => {
         setShowPopup(false);
@@ -119,7 +127,9 @@ const CardsPage = () => {
 
     return (
         <div className="categories page">
-            <MenuBar/>
+            <div id="menuBarWrapper">
+                <MenuBar/>
+            </div>
             {fetchError && (<p>{fetchError}</p>)}
 
             <input
@@ -155,7 +165,7 @@ const CardsPage = () => {
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
-
+            <button onClick={handlePrint} className="print-button">Print</button>
 
             {showPopup && Object.keys(popupData).map(cardNumber => (
                 <>
@@ -174,9 +184,11 @@ const CardsPage = () => {
                                 <p><strong>Street:</strong> {popupData.street}</p>
                                 <p><strong>Zip Code:</strong> {popupData.zip_code}</p>
                                 <p><strong>Percent:</strong> {popupData.percent}</p>
+                                <button onClick={handlePrint} className="print-button-popup">Print</button>
                             </div>
                         </div>
                     </div>
+
                 </>
             ))}
 
@@ -208,7 +220,49 @@ const CardsPage = () => {
                         <p>Phone: +1234567890</p>
                     </div>
                 </footer>}
+            <div className="hidden-table" style={{display: showHiddenTable ? 'block' : 'none'}}>
+                <table className="product-table">
+                <thead>
+                <tr>
+                    <th className="title" >Card Number
+                    </th>
+                    <th className="title" >Surname
+                    </th>
+                    <th className="title" >Name
+                    </th>
+                    <th className="title" >Patronymic
+                    </th>
+                    <th className="title" >Phone Number
+                    </th>
+                    <th className="title" >City
+                    </th>
+                    <th className="title" >Street
+                    </th>
+                    <th className="title" >Zip Code
+                    </th>
+                    <th className="title" >Percent
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {filteredCards.map(product => (
+                    <tr key={product.card_number}>
+                        <td className="product-data">{product.card_number}</td>
+                        <td className="product-data">{product.cust_surname}</td>
+                        <td className="product-data">{product.cust_name}</td>
+                        <td className="product-data">{product.cust_patronymic}</td>
+                        <td className="product-data">{product.phone_number}</td>
+                        <td className="product-data">{product.city}</td>
+                        <td className="product-data">{product.street}</td>
+                        <td className="product-data">{product.zip_code}</td>
+                        <td className="product-data">{product.percent}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            </div>
         </div>
+
     );
 };
 
