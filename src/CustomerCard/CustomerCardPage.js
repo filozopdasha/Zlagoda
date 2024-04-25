@@ -165,7 +165,9 @@ const CardsPage = () => {
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
+            {role === "Manager" &&(
             <button onClick={handlePrint} className="print-button">Print</button>
+            )}
 
             {showPopup && Object.keys(popupData).map(cardNumber => (
                 <>

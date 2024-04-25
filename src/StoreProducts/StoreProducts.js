@@ -168,7 +168,9 @@ const StoreProductsPage = () => {
                 <button onClick={() => setShowOnlySales(true)} className="add-employee-button">Sales</button>
                 <button onClick={() => setShowOnlySales(false)} className="add-employee-button">No Sales</button>
                 <button onClick={() => setShowOnlySales(null)} className="add-employee-button">All</button>
+                    {role === "Manager" &&(
                 <button onClick={handlePrint} className="print-button">Print</button>
+                        )}
 
             </div>)
             }

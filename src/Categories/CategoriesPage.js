@@ -120,7 +120,9 @@ const CategoriesPage = () => {
 
             <button className="sort add-category" onClick={() => handleSort("category_name")}>Sort by name</button>
 
+            {role === "Manager" &&(
             <button onClick={handlePrint} className="print-button">Print</button>
+            )}
             {showPopup && (
                 <>
                     <div className="overlay"></div>
@@ -157,7 +159,7 @@ const CategoriesPage = () => {
                 </>
             )}
 
-            <div className="category-cards">
+            <div className="category-cards-all">
                 {filteredCategories.map(category => (
                     <div key={category.category_number} className="category-card">
                         <h3>{category.category_name}</h3>

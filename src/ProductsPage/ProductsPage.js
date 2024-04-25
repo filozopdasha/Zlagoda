@@ -121,10 +121,10 @@ const ProductsPage = () => {
                                     onClick={() => handleSort("characteristics")}>Characteristics
                                 </th>
                                 {role === "Manager" && (
-                                    <th className="title" title="⛌"></th>
+                                    <th className="title delete-product" title="⛌"></th>
                                 )}
                                 {role === "Manager" && (
-                                    <th className="title" title="✎"></th>
+                                    <th className="title edit-product" title="✎"></th>
                                 )}
                             </tr>
                             </thead>
@@ -160,7 +160,9 @@ const ProductsPage = () => {
                             ))}
                             </tbody>
                         </table>
+                        {role === "Manager" &&(
                         <button onClick={handlePrint} className="print-button">Print</button>
+                            )}
                     </div>
                 </div>
             )}

@@ -127,7 +127,7 @@
         display: none;
     }
 
-    .print-button, button, input, footer {
+    .print-button, button, input, footer, .delete-product, .edit-product {
         display: none;
     }
 }

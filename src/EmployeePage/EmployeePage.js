@@ -273,7 +273,9 @@ const EmployeePage = () => {
                     {inputActive && (
                         <button className="add-employee-button" onClick={handleCancelSearchMonth}>Cancel</button>
                     )}
+                    {role === "Manager" &&(
                     <button onClick={handlePrint} className="print-button">Print</button>
+                        )}
                 </div>)}
 
 

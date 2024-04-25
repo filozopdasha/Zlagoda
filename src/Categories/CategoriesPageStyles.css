@@ -28,7 +28,7 @@
 .search-bar-categories:hover {
     border-color: #2546af;
 }
-.category-cards {
+.category-cards-all {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 250px));
     gap: 20px;
@@ -116,4 +116,5 @@
     input, footer{
         display:none;
     }
+
 }
