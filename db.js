@@ -828,6 +828,79 @@ app.get('/discount-card-usage-by-month', async (req, res) => {
     }
 });
 
+/**
+ * SEARCHES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
+app.get('/search-products-by-name', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT *
+            FROM "Product" INNER JOIN "Category" C on "Product".category_number = C.category_number
+            WHERE LOWER(product_name) LIKE LOWER($1 || '%')
+            ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(products => {
+            res.json(products);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.get('/search-products-by-category', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT *
+            FROM "Product" INNER JOIN "Category" C on "Product".category_number = C.category_number
+            WHERE LOWER(category_name) LIKE LOWER($1 || '%')
+            ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(products => {
+            res.json(products);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.get('/search-employees-by-surname', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT *
+            FROM "Employee"
+            WHERE LOWER(empl_surname) LIKE LOWER($1 || '%')
+            ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(empls => {
+            res.json(empls);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.get('/search-category', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    const searchCondition = `LOWER(category_name) LIKE LOWER($1 || '%') OR category_number=$1`;
+
+    db.any(`
+        SELECT *
+        FROM "Category"
+        WHERE ${searchCondition}
+        ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(categories => {
+            res.json(categories);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+
+
 /*
 * *
 * *

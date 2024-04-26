@@ -103,8 +103,30 @@ const EmployeePage = () => {
     };
 
     const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        setSortBy("empl_surname");
+        if (e.key === 'Enter') {
+            if(searchQuery!==''){
+                fetchSearchSurnames(e.target.value)
+            }else {
+                fetchEmployee()
+            }
+            setSortBy("empl_surname");
+        }
+    };
+
+
+    const fetchSearchSurnames= async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-employees-by-surname?search=${search}&sortBy=${"id_employee"}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the employees');
+            }
+            const data = await response.json();
+            setEmployee(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setEmployee(null);
+        }
     };
 
     const handleSort = (columnName) => {
@@ -205,8 +227,7 @@ const EmployeePage = () => {
 
     let filteredEmployee = employee ? employee.filter(employee =>
         (showCashiers ? employee.empl_role === "Cashier" : true) &&
-        (employee.empl_surname.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
-            employee.category_number === parseInt(searchQuery)) &&
+        //(employee.empl_surname.toLowerCase().startsWith(searchQuery.toLowerCase())
         (role === "Cashier" ? employee.id_employee === id : true)
     ) : [];
 
@@ -229,7 +250,8 @@ const EmployeePage = () => {
                     type="text"
                     placeholder="Search employee by surname..."
                     value={searchQuery}
-                    onChange={handleSearch}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={handleSearch}
                     className="search-bar-employee"
                 />
             )}

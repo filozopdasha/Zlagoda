@@ -93,7 +93,7 @@ const CardsPage = () => {
         try {
             const response = await fetch(`http://localhost:8081/delete-card/${cardNumber}`, { method: 'DELETE' });
             if (!response.ok) {
-                throw new Error('Could not delete category');
+                throw new Error('Could not delete card');
             }
             setCards(prevCards => prevCards.filter(ca => ca.card_number !== cardNumber));
         } catch (error) {

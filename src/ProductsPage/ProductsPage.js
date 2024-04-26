@@ -21,23 +21,24 @@ const ProductsPage = () => {
     }, []);
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/get-products?sortBy=${sortBy}&sortOrder=${sortOrder}`);
-                if (!response.ok) {
-                    throw new Error('Could not fetch the products');
-                }
-                const data = await response.json();
-                setProducts(data);
-                setFetchError(null);
-            } catch (error) {
-                setFetchError(error.message);
-                setProducts(null);
-            }
-        };
-
         fetchProducts();
     }, [sortBy, sortOrder]);
+
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/get-products?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the products');
+            }
+            const data = await response.json();
+            setProducts(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setProducts(null);
+        }
+    };
+
 
     const handleDeleteProduct = async (productId) => {
         try {
@@ -59,13 +60,54 @@ const ProductsPage = () => {
         setSearchBy(searchBy === "product_name" ? "category_name" : "product_name");
     };
     const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        setSortBy(searchBy === "product_name" ? "category_name" : "product_name");
+        if (e.key === 'Enter') {
+            if(searchBy === "product_name" && searchQuery!==''){
+                fetchSearchNameProducts(e.target.value)
+            } else if(searchBy === "category_name" && searchQuery!=='') {
+                fetchSearchNameCategory(e.target.value)
+            } else {
+                fetchProducts()
+            }
+            setSortBy(searchBy === "product_name" ? "category_name" : "product_name");
+        }
     };
 
-    let filteredProducts = products ? products.filter(product =>
-        (searchBy === "product_name" && product.product_name.toLowerCase().startsWith(searchQuery.toLowerCase())) ||
-        (searchBy === "category_name" && product.category_name.toLowerCase().startsWith(searchQuery.toLowerCase()))
+
+
+    const fetchSearchNameProducts = async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-products-by-name?search=${search}&sortBy=${"product_name"}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the products');
+            }
+            const data = await response.json();
+            setProducts(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setProducts(null);
+        }
+    };
+
+    const fetchSearchNameCategory = async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-products-by-category?search=${search}&sortBy=${"product_name"}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the products');
+            }
+            const data = await response.json();
+            setProducts(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setProducts(null);
+        }
+    };
+
+
+    let filteredProducts = products ? products.filter(product => product
+        //(searchBy === "product_name" && product.product_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        //(searchBy === "category_name" && product.category_name.toLowerCase().includes(searchQuery.toLowerCase()))
     ) : [];
 
 
@@ -93,7 +135,8 @@ const ProductsPage = () => {
                     type="text"
                     placeholder={searchBy === "product_name" ? "Search products by name..." : "Search products by category..."}
                     value={searchQuery}
-                    onChange={handleSearch}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={handleSearch}
                     className="search-bar"
                 />
                 <button className="search-condition" onClick={toggleSearchBy}>
