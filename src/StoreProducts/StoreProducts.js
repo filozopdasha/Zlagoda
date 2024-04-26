@@ -33,9 +33,9 @@ const StoreProductsPage = () => {
         try {
             let url = `http://localhost:8081/get-store-products?sortBy=${sortBy}&sortOrder=${sortOrder}`;
             if (showOnlySales === true) {
-                url = `http://localhost:8081/get-store-products-with-sales?sortBy=${"products_number"}&sortOrder=${"ASC"}`;
+                url = `http://localhost:8081/get-store-products-with-sales?sortBy=${sortBy}&sortOrder=${"ASC"}`;
             } else if (showOnlySales === false) {
-                url = `http://localhost:8081/get-store-products-without-sales?sortBy=${"products_number"}&sortOrder=${"ASC"}`; // Query for products without sales
+                url = `http://localhost:8081/get-store-products-without-sales?sortBy=${sortBy}&sortOrder=${"ASC"}`;
             }
             const response = await fetch(url);
             if (!response.ok) {

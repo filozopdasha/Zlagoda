@@ -144,6 +144,13 @@
         display: none;
     }
 
+    header nav, footer {
+        display: none;
+    }
+    .products{
+        width: 110%;
+        margin-left: -5%;
+    }
     @page {
         margin-top: 0;
         margin-bottom: 0;
