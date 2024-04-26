@@ -17,14 +17,18 @@ const MenuBar = () => {
             <nav className="navbar">
                 <ul className="navbar-nav">
                     <li className="nav-item">
-                        <span className="zlagoda">Zlagoda</span>
+                        <NavLink to="/zlagoda" className="nav-link" activeClassName="active">
+                            <span className="zlagoda">Zlagoda</span>
+                        </NavLink>
                     </li>
                     <li className="nav-item">
                         <NavLink to="/products" className="nav-link" activeClassName="active">Products</NavLink>
                     </li>
+                    {role === "Manager" && (
                     <li className="nav-item">
                         <NavLink to="/categories" className="nav-link" activeClassName="active">Categories</NavLink>
                     </li>
+                    )}
                     <li className="nav-item">
                         <NavLink to="/cards" className="nav-link" activeClassName="active">Customer Cards</NavLink>
                     </li>

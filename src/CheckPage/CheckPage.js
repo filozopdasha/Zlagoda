@@ -14,12 +14,19 @@ const CheckPage = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [totalSales, setTotalSales] = useState(0);
+    const [cashiers, setCashiers] = useState([]);
+    const [storedId, setStoredId] = useState("");
 
     const [role, setRole] = useState('');
     useEffect(() => {
         const storedRole = localStorage.getItem('role');
+        const storedIdCas = localStorage.getItem('id');
+
         if (storedRole) {
             setRole(storedRole);
+        }
+        if(storedIdCas){
+            setStoredId(storedIdCas)
         }
     }, []);
 
@@ -133,6 +140,9 @@ const CheckPage = () => {
 
     const handleSearchByConditions = (e) => {
         setTotalSales(0);
+        if(role === 'Cashier'){
+            setCashierId(storedId)
+        }
         if(cashierId && startDate && endDate){
             fetchChecksByCashierPeriod(cashierId,startDate,endDate)
         }else if(cashierId && startDate && !endDate){
@@ -141,8 +151,10 @@ const CheckPage = () => {
             fetchChecks()
         }else if(!cashierId && startDate && endDate){
             fetchChecksByPeriod(startDate,endDate)
-        }else if(cashierId && !startDate && !endDate){
+        }else if(role !== 'Cashier' && cashierId && !startDate && !endDate){
             fetchChecksByCashier(cashierId)
+        }else if(role === 'Cashier' && cashierId && !startDate && !endDate){
+            fetchChecks()
         }else{
             setFetchError("Please, fill in all fields correctly!")
         }
@@ -187,6 +199,27 @@ const CheckPage = () => {
             console.error(error.message);
         }
     }
+    const handleCashierChange = (e) => {
+        setCashierId(e.target.value);
+    };
+    useEffect(() => {
+        fetchCashiers();
+    }, []);
+
+    const fetchCashiers = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/get-cashiers?sortBy=${"id_employee"}&sortOrder=${"ASC"}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch cashiers');
+            }
+            const data = await response.json();
+            setCashiers(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setCashiers([]);
+        }
+    };
 
     return (
         <div className="check page">
@@ -207,13 +240,20 @@ const CheckPage = () => {
                 </button>
             )}
             <div>
-                <input
-                    type="text"
-                    placeholder="Cashier ID"
+                {role === "Manager" && (
+                <select
                     value={cashierId}
-                    className="date-bar"
-                    onChange={(e) => setCashierId(e.target.value)}
-                />
+                    onChange={handleCashierChange}
+                    className="select-cashiers"
+                >
+                    <option value="">Select Cashier</option>
+                    {cashiers.map(cashier => (
+                        <option key={cashier.id_employee} value={cashier.id_employee}>
+                            {cashier.empl_name} {cashier.empl_surname}, id - {cashier.id_employee}
+                        </option>
+                    ))}
+                </select>
+                )}
                 <input
                     type="text"
                     placeholder="Start (YYYY-MM-DD)"
@@ -229,10 +269,10 @@ const CheckPage = () => {
                     onChange={(e) => setEndDate(e.target.value)}
                 />
                 <button onClick={handleSearchByConditions} className="search-condition-button">Search</button>
-                {searchQuery.trim() === '' && totalSales === 0 && (
+                {searchQuery.trim() === '' && totalSales === 0 && role === "Manager" && (
                     <button onClick={showTotalSum} className="search-condition-button">Show total sum</button>
                 )}
-                {searchQuery.trim() === '' && totalSales > 0 && (
+                {searchQuery.trim() === '' && totalSales > 0 && role === "Manager" && (
                     <button onClick={showTotalSum} className="search-condition-button">Hide total sum</button>
                 )}
             </div>

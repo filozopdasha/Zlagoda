@@ -33,9 +33,9 @@ const StoreProductsPage = () => {
         try {
             let url = `http://localhost:8081/get-store-products?sortBy=${sortBy}&sortOrder=${sortOrder}`;
             if (showOnlySales === true) {
-                url = `http://localhost:8081/get-store-products-with-sales?sortBy=${sortBy}&sortOrder=${sortOrder}`;
+                url = `http://localhost:8081/get-store-products-with-sales?sortBy=${"products_number"}&sortOrder=${"ASC"}`;
             } else if (showOnlySales === false) {
-                url = `http://localhost:8081/get-store-products-without-sales?sortBy=${sortBy}&sortOrder=${sortOrder}`; // Query for products without sales
+                url = `http://localhost:8081/get-store-products-without-sales?sortBy=${"products_number"}&sortOrder=${"ASC"}`; // Query for products without sales
             }
             const response = await fetch(url);
             if (!response.ok) {
@@ -92,10 +92,6 @@ const StoreProductsPage = () => {
         navigate(`/edit-product/${productId}`);
     };
 
-    const handleAddProduct = () => {
-        navigate("/add-product");
-    };
-
     const handleSearchByDatePeriod = () => {
         if (startDate && endDate) {
             fetchProductsByDatePeriod(startDate, endDate);
@@ -106,9 +102,6 @@ const StoreProductsPage = () => {
         } else {
             setFetchError("Please select both start and end dates.");
         }
-    };
-    const handlePrint = () => {
-        window.print();
     };
 
     const fetchProductsByDatePeriod = async (startDate, endDate) => {
@@ -128,10 +121,20 @@ const StoreProductsPage = () => {
 
     let filteredProducts = storeProducts ? [...storeProducts] : [];
 
+    if (searchQuery.trim() !== "") {
+        filteredProducts = filteredProducts.filter(product =>
+            product.upc.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }
+
+    const handlePrint = () => {
+        window.print();
+    };
+
     return (
         <div className="store-products page">
             <div id="menuBarWrapper">
-            <MenuBar/>
+                <MenuBar/>
             </div>
             {fetchError && (<p>{fetchError}</p>)}
             <input
@@ -146,34 +149,33 @@ const StoreProductsPage = () => {
                     <NavLink to="/add-store-product" className="add-employee-text">Add Store Product</NavLink>
                 </button>
             )}
-            <div className="date-search">
-                <input
-                    type="text"
-                    className="date-bar"
-                    placeholder="Start Date (YYYY-MM-DD)"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                />
-                <input
-                    type="text"
-                    className="date-bar"
-                    placeholder="End Date (YYYY-MM-DD)"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                />
-                <button onClick={handleSearchByDatePeriod} className="search-condition-button">Search by Date Period</button>
-            </div>
-            {/* Button to filter by sales */}
+            {role === "Manager" && (
+                <div className="date-search">
+                    <input
+                        type="text"
+                        className="date-bar"
+                        placeholder="Start Date (YYYY-MM-DD)"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        className="date-bar"
+                        placeholder="End Date (YYYY-MM-DD)"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                    />
+                    <button onClick={handleSearchByDatePeriod} className="search-condition-button">Search by Date
+                        Period
+                    </button>
+                </div>)}
+
             {!totalSales && (<div className="for-sales">
                 <button onClick={() => setShowOnlySales(true)} className="add-employee-button">Sales</button>
                 <button onClick={() => setShowOnlySales(false)} className="add-employee-button">No Sales</button>
                 <button onClick={() => setShowOnlySales(null)} className="add-employee-button">All</button>
-                    {role === "Manager" &&(
-                <button onClick={handlePrint} className="print-button">Print</button>
-                        )}
-
-            </div>)
-            }
+                {role === "Manager" &&(<button onClick={handlePrint} className="print-button">Print</button>)}
+            </div>)}
             {showPopup && popupProduct && (
                 <>
                 <div className="overlay" onClick={handleClosePopup}></div>
@@ -209,8 +211,8 @@ const StoreProductsPage = () => {
                                 <th className="title" title="Sort by Product Name"
                                     onClick={() => handleSort("product_name")}>Product Name
                                 </th>
-                                {!totalSales && ( <th className="title" title="Sort by Product ID"
-                                                      onClick={() => handleSort("id_product")}>Product ID
+                                {!totalSales && (<th className="title" title="Sort by Product ID"
+                                                     onClick={() => handleSort("id_product")}>Product ID
                                 </th>)}
                                 {!totalSales && (<th className="title" title="Sort by Products Number"
                                                      onClick={() => handleSort("products_number")}>Products Number
@@ -218,11 +220,11 @@ const StoreProductsPage = () => {
                                 {totalSales && (<th className="title" title="Sort by Total Units Sold"
                                                     onClick={() => handleSort("total_units_sold")}>Total Units Sold
                                 </th>)}
-                                {!totalSales && (  <th className="title" title="Sort by Selling Price"
-                                                       onClick={() => handleSort("selling_price")}>Selling Price
+                                {!totalSales && (<th className="title" title="Sort by Selling Price"
+                                                     onClick={() => handleSort("selling_price")}>Selling Price
                                 </th>)}
-                                {role === "Manager" &&  !totalSales && (<th className="title" title="Actions"></th>)}
-                                {role === "Manager" && !totalSales &&(<th className="title" title="Actions"></th>)}
+                                {role === "Manager" && !totalSales && (<th className="edit-product-print title" title="Actions"></th>)}
+                                {role === "Manager" && !totalSales && (<th className="edit-product-print title" title="Actions"></th>)}
 
                             </tr>
                             </thead>
@@ -237,15 +239,15 @@ const StoreProductsPage = () => {
                                             <div className="sale-sign">Sale</div>
                                         )}
                                     </td>
-                                    {!totalSales && (  <td className="product-data"
-                                                           onClick={() => handlePopup(product.upc)}>{product.id_product}</td>)}
-                                    {!totalSales && (  <td className="product-data"
-                                                           onClick={() => handlePopup(product.upc)}>{product.products_number}</td>)}
-                                    {!totalSales && ( <td className="product-data"
-                                                          onClick={() => handlePopup(product.upc)}>{product.selling_price}</td>)}
-                                    {totalSales && (  <td className="product-data"
-                                                          onClick={() => handlePopup(product.upc)}>{product.total_units_sold}</td>)}
-                                    {role === "Manager" && !totalSales &&(
+                                    {!totalSales && (<td className="product-data"
+                                                         onClick={() => handlePopup(product.upc)}>{product.id_product}</td>)}
+                                    {!totalSales && (<td className="product-data"
+                                                         onClick={() => handlePopup(product.upc)}>{product.products_number}</td>)}
+                                    {!totalSales && (<td className="product-data"
+                                                         onClick={() => handlePopup(product.upc)}>{product.selling_price}</td>)}
+                                    {totalSales && (<td className="product-data"
+                                                        onClick={() => handlePopup(product.upc)}>{product.total_units_sold}</td>)}
+                                    {role === "Manager" && !totalSales && (
                                         <td className="product-data actions">
                                             <button
                                                 className="edit-product title"
@@ -255,7 +257,7 @@ const StoreProductsPage = () => {
                                                          className="add-product-text">✎</NavLink>
                                             </button>
                                         </td>)}
-                                    {role === "Manager" && !totalSales &&(
+                                    {role === "Manager" && !totalSales && (
                                         <td className="product-data actions">
                                             <button
                                                 className="delete-product title"

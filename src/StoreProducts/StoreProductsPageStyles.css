@@ -158,14 +158,13 @@
     margin: 10px;
     border-radius: 10px;
     font-size: 16px;
-    margin-left: 35%; /* Reduce the left margin */
+    margin-left: 35%;
 }
 .date-search{
     margin-left:10%;
 }
 .store-table{
     width: 100%;
-
 }
 
 .print-button:hover {
@@ -176,7 +175,15 @@
         display: none;
     }
 
-    .print-button, button, input, footer {
+    .print-button, button, input, footer, .edit-product, .delete-product, .delete-product-print, .edit-product-print, .actions {
         display: none;
+    }
+    .store-table{
+        margin-top: 20%;
+    }
+
+    @page {
+        margin-top: 0;
+        margin-bottom: 0;
     }
 }

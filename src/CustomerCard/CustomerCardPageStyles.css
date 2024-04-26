@@ -119,9 +119,13 @@
     }
     .hidden-table {
         display: block !important;
+        margin-top: -20%;
+    }
+    @page {
+        margin-top: 0;
+        margin-bottom: 0;
     }
 }
 .hidden-table .product-data{
     font-size:8px;
 }
-

@@ -30,6 +30,7 @@ const EditStoreProductsPage = () => {
                 setPromotionalProduct(product.promotional_product);
                 setProductsNumber(product.products_number);
                 setProductId(product.id_product);
+                setUpcProm(product.upc_prom)
 
                 const upcResponse = await fetch(`http://localhost:8081/get-all-upc-by-product-id/${product.id_product}`);
                 if (!upcResponse.ok) {

@@ -10,10 +10,10 @@ const CardsPage = () => {
     const [sortBy, setSortBy] = useState("card_number");
     const [sortOrder, setSortOrder] = useState("asc");
     const [showPopup, setShowPopup] = useState(false);
-    const [showHiddenTable, setShowHiddenTable] = useState(false);
     const [popupData, setPopupData] = useState({});
     const [selectedMonth, setSelectedMonth] = useState("");
-
+    const [selectedPercent, setSelectedPercent] = useState("");
+    const [showHiddenTable, setShowHiddenTable] = useState(false);
 
 
     const [role, setRole] = useState('');
@@ -31,6 +31,28 @@ const CardsPage = () => {
         if (selectedMonthValue !== "") {
             try {
                 const response = await fetch(`http://localhost:8081/discount-card-usage-by-month?month=${selectedMonthValue}`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch the cards');
+                }
+                const data = await response.json();
+                console.log("Fetched cards:", data);
+                setCards(data);
+                setFetchError(null);
+            } catch (error) {
+                setFetchError(error.message);
+                setCards(null);
+            }
+        } else {
+            fetchCards();
+        }
+    };
+    const handlePercentChange = async (e) => {
+        const percent = e.target.value;
+        setSelectedPercent(percent)
+
+        if (percent !== "") {
+            try {
+                const response = await fetch(`http://localhost:8081/get-card-by-percent?sortBy=${"cust_surname"}&sortOrder=${"ASC"}&percent=${percent}`);
                 if (!response.ok) {
                     throw new Error('Could not fetch the cards');
                 }
@@ -112,17 +134,17 @@ const CardsPage = () => {
         }
     };
 
-    const handlePrint = () => {
-        setShowHiddenTable(true);
-        window.print();
-        setShowHiddenTable(false);
-    };
 
     const handleClosePopup = () => {
         setShowPopup(false);
         setPopupData({});
     };
 
+    const handlePrint = () => {
+        setShowHiddenTable(true);
+        window.print();
+        setShowHiddenTable(false);
+    };
 
 
     return (
@@ -134,21 +156,20 @@ const CardsPage = () => {
 
             <input
                 type="text"
-                placeholder="Search category by name or category number..."
+                placeholder="Search card by surname or card number..."
                 value={searchQuery}
                 onChange={handleSearch}
                 className="search-bar-categories"
             />
 
-            {role === "Manager" && (
-                <button className="add-category">
-                    <NavLink to="/add-card" className="add-category-text">Add Card</NavLink>
-                </button>
-            )}
 
             <button className="sort add-category" onClick={() => handleSort("card_number")}>Sort by number</button>
 
             <button className="sort add-category" onClick={() => handleSort("cust_surname")}>Sort by Surname</button>
+
+            <button className="add-category">
+                <NavLink to="/add-card" className="add-category-text">Add Card</NavLink>
+            </button>
 
             <select onChange={handleMonthChange} value={selectedMonth} className="search-bar-categories">
                 <option value="">All Months</option>
@@ -165,10 +186,16 @@ const CardsPage = () => {
                 <option value="11">November</option>
                 <option value="12">December</option>
             </select>
-            {role === "Manager" &&(
-            <button onClick={handlePrint} className="print-button">Print</button>
-            )}
+            {role === "Manager" && (
+                <input
+                    type="text"
+                    placeholder="Search card by percent..."
+                    value={selectedPercent}
+                    onChange={handlePercentChange}
+                    className="search-bar-categories"
+                />)}
 
+            {role === "Manager" &&(<button onClick={handlePrint} className="print-button">Print</button>)}
             {showPopup && Object.keys(popupData).map(cardNumber => (
                 <>
                     <div className="overlay"></div>
@@ -186,11 +213,9 @@ const CardsPage = () => {
                                 <p><strong>Street:</strong> {popupData.street}</p>
                                 <p><strong>Zip Code:</strong> {popupData.zip_code}</p>
                                 <p><strong>Percent:</strong> {popupData.percent}</p>
-                                <button onClick={handlePrint} className="print-button-popup">Print</button>
                             </div>
                         </div>
                     </div>
-
                 </>
             ))}
 
@@ -224,47 +249,46 @@ const CardsPage = () => {
                 </footer>}
             <div className="hidden-table" style={{display: showHiddenTable ? 'block' : 'none'}}>
                 <table className="product-table">
-                <thead>
-                <tr>
-                    <th className="title" >Card Number
-                    </th>
-                    <th className="title" >Surname
-                    </th>
-                    <th className="title" >Name
-                    </th>
-                    <th className="title" >Patronymic
-                    </th>
-                    <th className="title" >Phone Number
-                    </th>
-                    <th className="title" >City
-                    </th>
-                    <th className="title" >Street
-                    </th>
-                    <th className="title" >Zip Code
-                    </th>
-                    <th className="title" >Percent
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {filteredCards.map(product => (
-                    <tr key={product.card_number}>
-                        <td className="product-data">{product.card_number}</td>
-                        <td className="product-data">{product.cust_surname}</td>
-                        <td className="product-data">{product.cust_name}</td>
-                        <td className="product-data">{product.cust_patronymic}</td>
-                        <td className="product-data">{product.phone_number}</td>
-                        <td className="product-data">{product.city}</td>
-                        <td className="product-data">{product.street}</td>
-                        <td className="product-data">{product.zip_code}</td>
-                        <td className="product-data">{product.percent}</td>
+                    <thead>
+                    <tr>
+                        <th className="title">Card Number
+                        </th>
+                        <th className="title">Surname
+                        </th>
+                        <th className="title">Name
+                        </th>
+                        <th className="title">Patronymic
+                        </th>
+                        <th className="title">Phone Number
+                        </th>
+                        <th className="title">City
+                        </th>
+                        <th className="title">Street
+                        </th>
+                        <th className="title">Zip Code
+                        </th>
+                        <th className="title">Percent
+                        </th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {filteredCards.map(product => (
+                        <tr key={product.card_number}>
+                            <td className="product-data">{product.card_number}</td>
+                            <td className="product-data">{product.cust_surname}</td>
+                            <td className="product-data">{product.cust_name}</td>
+                            <td className="product-data">{product.cust_patronymic}</td>
+                            <td className="product-data">{product.phone_number}</td>
+                            <td className="product-data">{product.city}</td>
+                            <td className="product-data">{product.street}</td>
+                            <td className="product-data">{product.zip_code}</td>
+                            <td className="product-data">{product.percent}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
             </div>
         </div>
-
     );
 };
 

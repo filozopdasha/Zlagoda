@@ -120,11 +120,12 @@ const AddEmployeePage = () => {
                            onChange={(e) => setPassword(e.target.value)}
                     />
                     <label htmlFor="empl_role">Employee Role:</label>
-                    <input type="text"
-                           id="empl_role"
-                           value={emplRole}
-                           onChange={(e) => setRole(e.target.value)}
-                    />
+                    <select onChange={(e) => setRole(e.target.value)}
+                            value={emplRole}>
+                        <option value="">Select role</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Cashier">Cashier</option>
+                    </select>
                     <label htmlFor="salary">Salary:</label>
                     <input type="text"
                            id="salary"

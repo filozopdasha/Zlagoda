@@ -99,6 +99,7 @@
     position: relative;
     margin-left: 10%;
 }
+
 .print-button:hover {
     background-color: #45a049;
 }
@@ -116,5 +117,8 @@
     input, footer{
         display:none;
     }
-
+    @page {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
 }

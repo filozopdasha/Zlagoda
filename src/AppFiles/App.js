@@ -18,21 +18,41 @@ import EditCustomerCardPage from "../CustomerCard/EditCustomerCardPage";
 import StoreProductsPage from "../StoreProducts/StoreProducts";
 import EditStoreProductsPage from "../StoreProducts/EditStoreProductsPage";
 import AddStoreProductPage from "../StoreProducts/AddStoreProductPage";
+import MenuBar from "../MenuBar/MenuBar";
+import zlagoda from './Zlagoda_main.png'
+function PhotoComponent() {
+    const containerStyle = {
+        width: '100vw',
+        height: '100vh',
+        backgroundImage: `url(${zlagoda})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    };
 
+    return (
+        <div style={containerStyle}>
+            <MenuBar />
+        </div>
+    );
+}
 
 function App() {
 
-  return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-            <Route path="/employees" element={<EmployeePage />} />
-            <Route path="/add-employee" element={<AddEmployeePage />} />
-            <Route path="/employees/:idempl" element={<EditEmployeePage />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/add-product" element={<AddProductPage />} />
-            <Route path="/products/:id" element={<EditProductPage />} />
-            <Route path="/categories" element={<CategoriesPage />} />
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Login/>}/>
+                <Route path="/zlagoda" element={<PhotoComponent/>}/>
+                <Route path="/employees" element={<EmployeePage/>}/>
+                <Route path="/add-employee" element={<AddEmployeePage/>}/>
+                <Route path="/employees/:idempl" element={<EditEmployeePage/>}/>
+                <Route path="/products" element={<ProductsPage/>}/>
+                <Route path="/add-product" element={<AddProductPage/>}/>
+                <Route path="/products/:id" element={<EditProductPage/>}/>
+                <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/add-category" element={<AddCategoryPage />} />
             <Route path="/categories/:id" element={<EditCategoryPage />} />
             <Route path="/cards" element={<CustomerCardPage />} />

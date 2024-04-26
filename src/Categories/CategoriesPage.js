@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import MenuBar from "../MenuBar/MenuBar";
 import './CategoriesPageStyles.css';
 import { NavLink } from "react-router-dom";
@@ -51,6 +50,7 @@ const CategoriesPage = () => {
             console.error(error.message);
         }
     };
+
     const handlePrint = () => {
         window.print();
     };
@@ -98,7 +98,7 @@ const CategoriesPage = () => {
     return (
         <div className="categories page">
             <div id="menuBarWrapper">
-            <MenuBar/>
+                <MenuBar/>
             </div>
             {fetchError && (<p>{fetchError}</p>)}
 
@@ -116,13 +116,12 @@ const CategoriesPage = () => {
                 </button>
             )}
 
-            <button className="sort add-category" onClick={() => handleSort("category_number")}>Sort by number</button>
+            {role === "Cashier" && (
+                <button className="sort add-category" onClick={() => handleSort("category_number")}>Sort by
+                    number</button>)}
 
             <button className="sort add-category" onClick={() => handleSort("category_name")}>Sort by name</button>
-
-            {role === "Manager" &&(
-            <button onClick={handlePrint} className="print-button">Print</button>
-            )}
+            {role === "Manager" &&(<button onClick={handlePrint} className="print-button">Print</button>)}
             {showPopup && (
                 <>
                     <div className="overlay"></div>

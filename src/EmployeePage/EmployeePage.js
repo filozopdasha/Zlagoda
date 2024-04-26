@@ -16,8 +16,6 @@ const EmployeePage = () => {
     const [showHiddenTable, setShowHiddenTable] = useState(false);
 
 
-
-
     const [showBest, setShowBest] = useState(false);
     const [inputActive, setInputActive] = useState(false);
     const [inputText, setInputText] = useState('');
@@ -223,17 +221,17 @@ const EmployeePage = () => {
     return (
         <div className="employees page">
             <div id="menuBarWrapper">
-            <MenuBar/>
+                <MenuBar/>
             </div>
             {fetchError && (<p>{fetchError}</p>)}
             {role === "Manager" && (
-            <input
-                type="text"
-                placeholder="Search employee by surname..."
-                value={searchQuery}
-                onChange={handleSearch}
-                className="search-bar-employee"
-            />
+                <input
+                    type="text"
+                    placeholder="Search employee by surname..."
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    className="search-bar-employee"
+                />
             )}
             {role === "Manager" && (
                 <div className="add-employee-container">
@@ -260,28 +258,33 @@ const EmployeePage = () => {
                             month</button>
                     )}
                     {inputActive && (
-                        <input
-                            type="text"
-                            value={inputText}
-                            onChange={handleInputChange}
-                            className="date-bar-employee"
-                            placeholder="MM"
-                        />)}
+                        <select onChange={handleInputChange} value={inputText} className="date-bar-employee">
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>)}
                     {inputActive && (
                         <button className="add-employee-button" onClick={handleSearchMonth}>Search</button>
                     )}
                     {inputActive && (
                         <button className="add-employee-button" onClick={handleCancelSearchMonth}>Cancel</button>
                     )}
-                    {role === "Manager" &&(
-                    <button onClick={handlePrint} className="print-button">Print</button>
-                        )}
+                    {role === "Manager" &&(<button onClick={handlePrint} className="print-button">Print</button>)}
                 </div>)}
 
 
             {showPopup && popupEmployee && (
                 <>
-                <div className="overlay"></div>
+                    <div className="overlay"></div>
                     <div className="popup-container">
                         <div className="popup">
                             <div className="popup-content">
@@ -308,88 +311,98 @@ const EmployeePage = () => {
 
             {role === "Manager" && (
                 <>
-            {filteredEmployee.length > 0 && (
-                <div className="employees">
-                    <div style={{width: '80%', margin: '0 auto'}}>
-                        <table className="employee-table">
-                            <thead>
-                            <tr>
-                                <th className="title-employee" title="Sort by ID" onClick={() => handleSort("id_employee")}>ID
-                                </th>
-                                <th className="title-employee" title="Sort by Employee Surname"
-                                    onClick={() => handleSort("empl_surname")}>Employee Surname
-                                </th>
-                                <th className="title-employee" title="Sort by Employee Name"
-                                    onClick={() => handleSort("empl_name")}>Employee Name
-                                </th>
-                                {!shifts && (
-                                <th className="title-employee" title="Sort by Employee role"
-                                    onClick={() => handleSort("empl_role")}>Employee role
-                                </th>
-                                )}
-                                {!shifts && (<th className="space"></th>)}
-                                <th className="title-employee" title="Sort by Employee Phone Number"
-                                    onClick={() => handleSort("phone_number")}>Phone Number
-                                </th>
-                                {shifts && (
-                                    <th className="title-employee" title="Number of shifts per month"
-                                        onClick={() => handleSort("worked_days")}>Worked days
-                                    </th>
-                                )}
-                                {!shifts && (<th className="title-employee" title="Sort by Employee Phone City"
-                                    onClick={() => handleSort("city")}>City
-                                </th>)}
-                                {!shifts && (<th className="title-employee" title="Sort by Employee Street"
-                                    onClick={() => handleSort("street")}>Street
-                                </th>)}
+                    {filteredEmployee.length > 0 && (
+                        <div className="employees">
+                            <div style={{width: '80%', margin: '0 auto'}}>
+                                <table className="employee-table">
+                                    <thead>
+                                    <tr>
+                                        <th className="title-employee" title="Sort by ID"
+                                            onClick={() => handleSort("id_employee")}>ID
+                                        </th>
+                                        <th className="title-employee" title="Sort by Employee Surname"
+                                            onClick={() => handleSort("empl_surname")}>Employee Surname
+                                        </th>
+                                        <th className="title-employee" title="Sort by Employee Name"
+                                            onClick={() => handleSort("empl_name")}>Employee Name
+                                        </th>
+                                        {!shifts && (
+                                            <th className="title-employee" title="Sort by Employee role"
+                                                onClick={() => handleSort("empl_role")}>Employee role
+                                            </th>
+                                        )}
+                                        {!shifts && (<th className="space"></th>)}
+                                        <th className="title-employee" title="Sort by Employee Phone Number"
+                                            onClick={() => handleSort("phone_number")}>Phone Number
+                                        </th>
+                                        {shifts && (
+                                            <th className="title-employee" title="Number of shifts per month"
+                                                onClick={() => handleSort("worked_days")}>Worked days
+                                            </th>
+                                        )}
+                                        {!shifts && (<th className="title-employee" title="Sort by Employee Phone City"
+                                                         onClick={() => handleSort("city")}>City
+                                        </th>)}
+                                        {!shifts && (<th className="title-employee" title="Sort by Employee Street"
+                                                         onClick={() => handleSort("street")}>Street
+                                        </th>)}
 
-                                {role === "Manager" && !shifts && (
-                                    <th className="title-employee" title="⛌"></th>
-                                )}
-                                {role === "Manager" && ! shifts && (
-                                <th className="title-employee" title="✎"></th>
-                                )}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {filteredEmployee.map(employee => (
-                                <tr key={employee.id_employee}>
-                                    <td className="employee-data" onClick={() => handlePopup(employee.id_employee)}>{employee.id_employee}</td>
-                                    <td className="employee-data">{employee.empl_surname}</td>
-                                    <td className="employee-data">{employee.empl_name}</td>
-                                    {!shifts && (<td className="employee-data">{employee.empl_role}</td>)}
-                                    {!shifts && (<td className="space"></td>)}
-                                    <td className="employee-data">{employee.phone_number}</td>
-                                    {shifts && (<td className="employee-data">{employee.worked_days}</td>)}
-                                    {!shifts && (<td className="employee-data">{employee.city}</td>)}
-                                    {!shifts && (<td className="employee-data">{employee.street}</td>)}
-                                    {role === "Manager" && !shifts && (
-                                        <td className="employee-data delete-employee">
-                                            <button
-                                                className="delete-employee title-employee"
-                                                title="Remove employee"
-                                                onClick={() => handleDeleteEmployee(employee.id_employee)}>⛌
-                                            </button>
-                                        </td>
-                                    )}
-                                    {role === "Manager" && !shifts && (
-                                    <td className="employee-data edit-employee">
-                                        <button
-                                            className="edit-employee title-employee"
-                                            title="Edit employee">
-                                            <NavLink to={"/employees/" + employee.id_employee}
-                                                     className="add-employee-text">✎</NavLink>
-                                        </button>
-                                    </td>
-                                    )}
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            )}
-            </>
+                                        {role === "Manager" && !shifts && (
+                                            <th className="title-employee" title="⛌"></th>
+                                        )}
+                                        {role === "Manager" && !shifts && (
+                                            <th className="title-employee" title="✎"></th>
+                                        )}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {filteredEmployee.map(employee => (
+                                        <tr key={employee.id_employee}>
+                                            <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}
+                                                onClick={() => handlePopup(employee.id_employee)}>{employee.id_employee}</td>
+                                            <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.empl_surname}</td>
+                                            <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.empl_name}</td>
+                                            {!shifts && (
+                                                <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.empl_role}</td>)}
+                                            {!shifts && (<td className="space"></td>)}
+                                            <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.phone_number}</td>
+                                            {shifts && (
+                                                <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.worked_days}</td>)}
+                                            {!shifts && (
+                                                <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.city}</td>)}
+                                            {!shifts && (
+                                                <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.street}</td>)}
+                                            {role === "Manager" && !shifts && id !== employee.id_employee && (
+                                                <td className="employee-data delete-employee">
+                                                    <button
+                                                        className="delete-employee title-employee"
+                                                        title="Remove employee"
+                                                        onClick={() => handleDeleteEmployee(employee.id_employee)}>⛌
+                                                    </button>
+                                                </td>
+                                            )}
+                                            {role === "Manager" && !shifts && id === employee.id_employee && (
+                                                <td className="employee-data ">
+                                                </td>
+                                            )}
+                                            {role === "Manager" && !shifts && (
+                                                <td className="employee-data edit-employee">
+                                                    <button
+                                                        className="edit-employee title-employee"
+                                                        title="Edit employee">
+                                                        <NavLink to={"/employees/" + employee.id_employee}
+                                                                 className="add-employee-text">✎</NavLink>
+                                                    </button>
+                                                </td>
+                                            )}
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
             {role === "Cashier" && (
                 <>
@@ -406,7 +419,14 @@ const EmployeePage = () => {
                                 <p><strong>Phone Number:</strong> {employee.phone_number}</p>
                                 <p><strong>Address:</strong> {employee.city}, {employee.street}, {employee.zip_code}</p>
                             </div>
+                            <button
+                                className="edit-employee title-employee"
+                                title="Edit employee">
+                                <NavLink to={"/employees/" + employee.id_employee}
+                                         className="add-employee-text edit-profile">Change password</NavLink>
+                            </button>
                         </div>
+
                     ))}
                 </>
             )}
@@ -422,7 +442,7 @@ const EmployeePage = () => {
                         <p>Phone: +1234567890</p>
                     </div>
                 </footer>}
-            <div className="hidden-table" style={{display: showHiddenTable ? 'block' : 'none'}}>
+            <div className="hidden-table-empl" style={{display: showHiddenTable ? 'block' : 'none'}}>
                 <table>
                     <thead>
                     <tr>

@@ -52,14 +52,22 @@ const ProductsPage = () => {
             console.error('Error deleting product:', error.message);
         }
     };
-    const handlePrint = () => {
-        window.print();
-    };
 
+
+    const [searchBy, setSearchBy] = useState("product_name");
+    const toggleSearchBy = () => {
+        setSearchBy(searchBy === "product_name" ? "category_name" : "product_name");
+    };
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
-        setSortBy("product_name")
+        setSortBy(searchBy === "product_name" ? "category_name" : "product_name");
     };
+
+    let filteredProducts = products ? products.filter(product =>
+        (searchBy === "product_name" && product.product_name.toLowerCase().startsWith(searchQuery.toLowerCase())) ||
+        (searchBy === "category_name" && product.category_name.toLowerCase().startsWith(searchQuery.toLowerCase()))
+    ) : [];
+
 
     const handleSort = (columnName) => {
         if (sortBy === columnName) {
@@ -70,38 +78,40 @@ const ProductsPage = () => {
         }
     };
 
-    let filteredProducts = products ? products.filter(product =>
-        product.product_name.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
-        product.category_number === parseInt(searchQuery)
-    ) : [];
+    const handlePrint = () => {
+        window.print();
+    };
 
     return (
         <div className="products page">
             <div id="menuBarWrapper">
-            <MenuBar />
+                <MenuBar/>
             </div>
             {fetchError && (<p>{fetchError}</p>)}
+            <div>
+                <input
+                    type="text"
+                    placeholder={searchBy === "product_name" ? "Search products by name..." : "Search products by category..."}
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    className="search-bar"
+                />
+                <button className="search-condition" onClick={toggleSearchBy}>
+                    Change condition
+                </button>
+                {role === "Manager" &&(<button onClick={handlePrint} className="print-button search-condition">Print</button>)}
+                {role === "Manager" && (
+                    <button className="add-product">
+                        <NavLink to="/add-product" className="add-product-text">Add Product</NavLink>
+                    </button>
+                )}
 
-            <input
-                type="text"
-                placeholder="Search products by name or category number..."
-                value={searchQuery}
-                onChange={handleSearch}
-                className="search-bar"
-            />
+            </div>
 
-
-            {role === "Manager" && (
-            <button className="add-product">
-                <NavLink to="/add-product" className="add-product-text">Add Product</NavLink>
-            </button>
-
-            )}
 
             {filteredProducts.length > 0 && (
                 <div className="products">
                     <div style={{width: '80%', margin: '0 auto'}}>
-
                         <table className="product-table">
                             <thead>
                             <tr>
@@ -112,7 +122,7 @@ const ProductsPage = () => {
                                 </th>
                                 <th className="space"></th>
                                 <th className="title" title="Sort by Category Number"
-                                    onClick={() => handleSort("category_number")}>Category Number
+                                    onClick={() => handleSort("category_name")}>Category
                                 </th>
                                 <th className="title" title="Sort by Manufacturer"
                                     onClick={() => handleSort("manufacturer")}>Manufacturer
@@ -121,10 +131,10 @@ const ProductsPage = () => {
                                     onClick={() => handleSort("characteristics")}>Characteristics
                                 </th>
                                 {role === "Manager" && (
-                                    <th className="title delete-product" title="⛌"></th>
+                                    <th className="delete-product-print title" title="⛌"></th>
                                 )}
                                 {role === "Manager" && (
-                                    <th className="title edit-product" title="✎"></th>
+                                    <th className="edit-product-print title" title="✎"></th>
                                 )}
                             </tr>
                             </thead>
@@ -134,7 +144,7 @@ const ProductsPage = () => {
                                     <td className="product-data">{product.id_product}</td>
                                     <td className="product-data">{product.product_name}</td>
                                     <td className="space"></td>
-                                    <td className="product-data">{product.category_number}</td>
+                                    <td className="product-data">{product.category_name}</td>
                                     <td className="product-data">{product.manufacturer}</td>
                                     <td className="product-data">{product.characteristics}</td>
                                     {role === "Manager" && (
@@ -160,13 +170,10 @@ const ProductsPage = () => {
                             ))}
                             </tbody>
                         </table>
-                        {role === "Manager" &&(
-                        <button onClick={handlePrint} className="print-button">Print</button>
-                            )}
                     </div>
                 </div>
             )}
-            {filteredProducts.length === 0 && <div className="error-message"><h2 >No products found.</h2></div>}
+            {filteredProducts.length === 0 && <div className="error-message"><h2>No products found.</h2></div>}
             {filteredProducts.length !== 0 &&
                 <footer className="footer">
                     <div className="contact-info">

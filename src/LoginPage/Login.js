@@ -49,7 +49,7 @@ function Login() {
                 throw new Error('Incorrect password or ID!');
             }
 
-            navigate('/products');
+            navigate('/zlagoda');
         } catch (error) {
             setError(error.message);
         }

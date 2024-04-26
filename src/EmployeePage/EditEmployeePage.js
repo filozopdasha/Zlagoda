@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import './AddEmployeePageStyles.css';
 import { format } from 'date-fns';
+import bcrypt from "bcryptjs";
 
 const EditEmployeePage = () => {
     const {idempl} = useParams()
@@ -20,6 +21,14 @@ const EditEmployeePage = () => {
     const [emplCity, setCity] = useState('');
     const [emplStreet, setStreet] = useState('');
     const [zipCode, setZipCode] = useState('');
+    const [password, setPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
+    const [passwordMatchError, setPasswordMatchError] = useState(false);
+
+
+
+
 
     useEffect(() => {
         const fetchEmployee = async () => {
@@ -44,6 +53,8 @@ const EditEmployeePage = () => {
                 setCity(empl.city);
                 setStreet(empl.street);
                 setZipCode(empl.zip_code);
+                setPassword(empl.password)
+
             }catch (error){
                 console.error(error)
             }
@@ -53,6 +64,23 @@ const EditEmployeePage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if(newPassword !== newPasswordConfirm){
+            setPasswordMatchError(true);
+            return;
+        } else {
+            setPasswordMatchError(false);
+        }
+        let newsetedpassword = password;
+
+        if(role === "Cashier" && newPassword ===''){
+            setPasswordMatchError(true)
+            return
+        }
+
+        if(newPassword === newPasswordConfirm && newPassword !== ''){
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            newsetedpassword = hashedPassword;
+        }
 
         if (!emplName || !emplSurname || !emplPatronymic || !emplRole || !emplSalary || !dateOfBirth || !dateOfStart || !phoneNumber
         || !emplCity || !emplStreet || !zipCode) {
@@ -77,6 +105,7 @@ const EditEmployeePage = () => {
                     city: emplCity,
                     street: emplStreet,
                     zip_code: zipCode,
+                    password: newsetedpassword,
                 })
             });
             if (!response.ok) {
@@ -94,12 +123,22 @@ const EditEmployeePage = () => {
     const handleCancel = () => {
         navigate('/employees');
     };
+    const [role, setRoleEmp] = useState('');
+    useEffect(() => {
+        const storedRole = localStorage.getItem('role');
+        if (storedRole) {
+            setRoleEmp(storedRole);
+        }
+    }, []);
+
 
     return (
         <div className="add-employee-form-container">
+            {role === "Manager" && (
             <div className="edit-employee-form">
-                {formError && <p className="add-error-message">{formError}</p>}
                 <h2 className="zlagoda-form">Zlagoda</h2>
+                {formError && <p className="add-error-message">{formError}</p>}
+
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="empl_name">Employee Name:</label>
                     <input type="text"
@@ -120,11 +159,12 @@ const EditEmployeePage = () => {
                            onChange={(e) => setPatronymic(e.target.value)}
                     />
                     <label htmlFor="empl_role">Employee Role:</label>
-                    <input type="text"
-                           id="empl_role"
-                           value={emplRole}
-                           onChange={(e) => setRole(e.target.value)}
-                    />
+                    <select onChange={(e) => setRole(e.target.value)}
+                            value={emplRole}>
+                        <option value="">Select role</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Cashier">Cashier</option>
+                    </select>
                     <label htmlFor="salary">Salary:</label>
                     <input type="text"
                            id="salary"
@@ -167,12 +207,57 @@ const EditEmployeePage = () => {
                            value={zipCode}
                            onChange={(e) => setZipCode(e.target.value)}
                     />
+                    {passwordMatchError && <p className='add-error-message'>Passwords do not match</p>}
+                    <label htmlFor="password">New password:</label>
+                    <input type="password"
+                           id="password"
+                           value={newPassword}
+                           onChange={(e) => setNewPassword(e.target.value)}
+                           style={{borderColor: passwordMatchError ? 'red' : ''}}
+                    />
+                    <label htmlFor="password">Confirm new password:</label>
+                    <input type="password"
+                           id="password"
+                           value={newPasswordConfirm}
+                           onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                           style={{borderColor: passwordMatchError ? 'red' : ''}}
+                    />
                     <div className="action-buttons">
                         <button type="button" onClick={handleCancel}>Cancel</button>
                         <button type="submit">Edit employee</button>
                     </div>
                 </form>
-            </div>
+            </div>)}
+            {role === "Cashier" && (
+                <div className="edit-employee-form cashier-form-container">
+                    <h2 className="zlagoda-form">Zlagoda</h2>
+                    {formError && <p className="add-error-message">{formError}</p>}
+                    {passwordMatchError && newPassword !== '' && <p className='add-error-message'>Passwords do not match</p>}
+                    {passwordMatchError && newPassword === '' && <p className='add-error-message'>Password can not be empty string</p>}
+                    <form onSubmit={handleSubmit}>
+                        <label htmlFor="password">New password:</label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            style={{borderColor: passwordMatchError ? 'red' : ''}}
+                        />
+                        <label htmlFor="password">Confirm new password:</label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={newPasswordConfirm}
+                            onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                            style={{borderColor: passwordMatchError ? 'red' : ''}}
+                        />
+                        <div className="action-buttons">
+                            <button type="button" onClick={handleCancel}>Cancel</button>
+                            <button type="submit">Edit employee</button>
+                        </div>
+                    </form>
+                </div>
+            )}
         </div>
     );
 };

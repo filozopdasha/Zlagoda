@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import './AddCustomerCardPageStyles.css';
 
@@ -8,7 +7,6 @@ const AddCustomerCardPage = () => {
     const [fetchError, setFetchError] = useState(null);
     const [cardNumberOptions, setCardNumberOptions] = useState([]);
     const [selectedCardNumber, setSelectedCardNumber] = useState('');
-    const [cardNumber, setCardNumber] = useState('');
     const [custSurname, setCustSurname] = useState('');
     const [custName, setCustName] = useState('');
     const [custPatronymic, setCustPatronymic] = useState('');
@@ -22,32 +20,37 @@ const AddCustomerCardPage = () => {
     useEffect(() => {
         const fetchMaxId = async () => {
             try {
-                const response = await fetch('http://localhost:8081/get-max-card-number');
+                const response = await fetch(`http://localhost:8081/get-card?sortBy=${"card_number"}&sortOrder=${"ASC"}`);
                 if (!response.ok) {
-                    throw new Error('Could not fetch max card number');
+                    throw new Error('Could not fetch card numbers');
                 }
                 const cardNumbers = await response.json();
 
-                const existingCardNumbers = cardNumbers.map(card => card.card_number);
+                const existingCardNumbers = cardNumbers.map(card => parseInt(card.card_number)).filter(cardNum => !isNaN(cardNum));
                 const maxNumber = Math.max(...existingCardNumbers, 0);
 
                 const availableNumbers = [];
-                for (let i = 1; i <= maxNumber + 21; i++) {
-                    if (!existingCardNumbers.includes(i)) {
-                        availableNumbers.push(i);
+                const MAX_RANDOM_ATTEMPTS = 100;
+
+                while (availableNumbers.length < maxNumber + 21) {
+                    const randomNumber = Math.floor(Math.random() * (maxNumber + 21)) + 1;
+                    if (!existingCardNumbers.includes(randomNumber) && !availableNumbers.includes(randomNumber)) {
+                        availableNumbers.push(randomNumber);
+                    }
+
+                    if (availableNumbers.length >= maxNumber + 21 || availableNumbers.length >= MAX_RANDOM_ATTEMPTS) {
+                        break;
                     }
                 }
 
                 setCardNumberOptions(availableNumbers);
             } catch (error) {
-                console.error('Error fetching max card number:', error.message);
+                console.error('Error fetching card numbers:', error.message);
             }
         };
 
         fetchMaxId();
     }, []);
-
-
 
 
 
@@ -109,12 +112,16 @@ const AddCustomerCardPage = () => {
                 <h2 className="zlagoda-form">Zlagoda</h2>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="card_number">Card Number:</label>
-                    <input
-                        type="text"
-                        id="card_number"
+                    <select
+                        id="category_number"
                         value={selectedCardNumber}
                         onChange={(e) => setSelectedCardNumber(e.target.value)}
-                    />
+                    >
+                        <option value="">Select card number</option>
+                        {cardNumberOptions.map(option => (
+                            <option key={option} value={option}>{option}</option>
+                        ))}
+                    </select>
                     <label htmlFor="cust_surname">Customer Surname:</label>
                     <input
                         type="text"

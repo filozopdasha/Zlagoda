@@ -23,7 +23,19 @@
     font-size: 16px;
     position: relative;
     top: 100px;
-    right: -48%;
+    left:26%
+}
+.search-condition{
+    background-color: rgba(163, 195, 238, 0.69);
+    width: 10%;
+    border: 1px solid black;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    position: relative;
+    top: 100px;
+    right: -10%;
 }
 .add-product-text{
     font-size: 15px;
@@ -122,12 +134,19 @@
 .print-button:hover {
     background-color: #45a049;
 }
+
 @media print {
     #menuBarWrapper {
         display: none;
     }
 
-    .print-button, button, input, footer, .delete-product, .edit-product {
+    .print-button, button, input, footer, .delete-product-print, .edit-product-print, .edit-product, .delete-product, .space, .url-bar {
         display: none;
     }
+
+    @page {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
 }
+
