@@ -185,7 +185,7 @@ const CheckPage = () => {
 
     const fetchChecksByNumber = async (search) => {
         try {
-            const response = await fetch(`http://localhost:8081/search-store?search=${search}&sortBy=${"check_number"}&sortOrder=${"ASC"}`);
+            const response = await fetch(`http://localhost:8081/search-check-by-number?search=${search}&sortBy=${"check_number"}&sortOrder=${"ASC"}`);
             if (!response.ok) {
                 throw new Error('Could not fetch the checks');
             }

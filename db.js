@@ -765,13 +765,13 @@ app.get('/get-best-worker', (req, res) => {
 });
 app.get('/get-work-days-in-month', (req, res) =>{
     const { month } = req.query;
-    db.any(`SELECT e.id_employee, empl_surname, empl_name, phone_number, city, street, COUNT(DISTINCT EXTRACT(DAY FROM c.print_date)) AS worked_days
+    db.any(`SELECT e.id_employee, empl_surname, empl_name, phone_number, city, street, COUNT(DISTINCT EXTRACT(DAY FROM c.print_date)) AS worked_days, SUM(S.product_number) AS total_sales
             FROM "Employee" e
-                     LEFT JOIN "Check" c ON e.id_employee = c.id_employee
+                LEFT JOIN "Check" c ON e.id_employee = c.id_employee 
+                INNER JOIN "Sale" S on c.check_number = S.check_number
                 AND EXTRACT(YEAR FROM c.print_date) = EXTRACT(YEAR FROM CURRENT_DATE)
                 AND EXTRACT(MONTH FROM print_date) = $1
             WHERE e.empl_role='Cashier'
-              AND EXISTS (SELECT 1 FROM "Sale" s WHERE s.check_number = c.check_number)
             GROUP BY e.id_employee, empl_surname, empl_name, phone_number, city, street
             ORDER BY worked_days DESC`, [month])
         .then(result =>{

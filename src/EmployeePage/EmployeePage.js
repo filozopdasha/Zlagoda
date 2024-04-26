@@ -300,7 +300,7 @@ const EmployeePage = () => {
                     {inputActive && (
                         <button className="add-employee-button" onClick={handleCancelSearchMonth}>Cancel</button>
                     )}
-                    {role === "Manager" &&(<button onClick={handlePrint} className="print-button">Print</button>)}
+                    {role === "Manager" && !shifts &&(<button onClick={handlePrint} className="print-button">Print</button>)}
                 </div>)}
 
 
@@ -362,6 +362,11 @@ const EmployeePage = () => {
                                                 onClick={() => handleSort("worked_days")}>Worked days
                                             </th>
                                         )}
+                                        {shifts && (
+                                            <th className="title-employee" title="Number of total sales"
+                                                onClick={() => handleSort("total_sales")}>Total sales
+                                            </th>
+                                        )}
                                         {!shifts && (<th className="title-employee" title="Sort by Employee Phone City"
                                                          onClick={() => handleSort("city")}>City
                                         </th>)}
@@ -390,6 +395,8 @@ const EmployeePage = () => {
                                             <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.phone_number}</td>
                                             {shifts && (
                                                 <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.worked_days}</td>)}
+                                            {shifts && (
+                                                <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.total_sales}</td>)}
                                             {!shifts && (
                                                 <td className={id === employee.id_employee ? 'highlighted-row employee-data' : 'employee-data'}>{employee.city}</td>)}
                                             {!shifts && (

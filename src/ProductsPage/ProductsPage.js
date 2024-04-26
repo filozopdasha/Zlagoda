@@ -8,7 +8,7 @@ const ProductsPage = () => {
 
     const [fetchError, setFetchError] = useState(null);
     const [products, setProducts] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState("id_product");
     const [sortOrder, setSortOrder] = useState("asc");
 
@@ -68,7 +68,7 @@ const ProductsPage = () => {
             } else {
                 fetchProducts()
             }
-            setSortBy(searchBy === "product_name" ? "category_name" : "product_name");
+            setSortBy("product_name");
         }
     };
 
