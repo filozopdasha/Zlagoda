@@ -101,9 +101,50 @@ const CardsPage = () => {
         }
     };
 
+    const [searchBy, setSearchBy] = useState("card_number");
+    const toggleSearchBy = () => {
+        setSearchBy(searchBy === "card_number" ? "cust_surname" : "card_number");
+    };
     const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        setSortBy("card_number");
+        if (e.key === 'Enter') {
+            if(searchBy === "card_number" && searchQuery!==''){
+                fetchByNumber(e.target.value)
+            } else if(searchBy === "cust_surname" && searchQuery!=='') {
+                fetchByName(e.target.value)
+            } else {
+                fetchCards()
+            }
+            setSortBy("card_number");
+        }
+    };
+
+    const fetchByName = async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-card-by-name?search=${search}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the cards');
+            }
+            const data = await response.json();
+            setCards(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setCards(null);
+        }
+    };
+    const fetchByNumber = async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-card-by-number?search=${search}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the categories');
+            }
+            const data = await response.json();
+            setCards(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setCards(null);
+        }
     };
 
     const handleSort = (columnName) => {
@@ -115,9 +156,9 @@ const CardsPage = () => {
         }
     };
 
-    let filteredCards = cards ? cards.filter(card =>
-        card.cust_surname.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
-        card.card_number.toString().startsWith(searchQuery)
+    let filteredCards = cards ? cards.filter(card => card
+       // card.cust_surname.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
+        //card.card_number.toString().startsWith(searchQuery)
     ) : [];
 
     const handlePopup = async (cardNumber) => {
@@ -153,49 +194,55 @@ const CardsPage = () => {
                 <MenuBar/>
             </div>
             {fetchError && (<p>{fetchError}</p>)}
-
-            <input
-                type="text"
-                placeholder="Search card by surname or card number..."
-                value={searchQuery}
-                onChange={handleSearch}
-                className="search-bar-categories"
-            />
-
-
-            <button className="sort add-category" onClick={() => handleSort("card_number")}>Sort by number</button>
-
-            <button className="sort add-category" onClick={() => handleSort("cust_surname")}>Sort by Surname</button>
-
-            <button className="add-category">
-                <NavLink to="/add-card" className="add-category-text">Add Card</NavLink>
-            </button>
-
-            <select onChange={handleMonthChange} value={selectedMonth} className="search-bar-categories">
-                <option value="">All Months</option>
-                <option value="01">January</option>
-                <option value="02">February</option>
-                <option value="03">March</option>
-                <option value="04">April</option>
-                <option value="05">May</option>
-                <option value="06">June</option>
-                <option value="07">July</option>
-                <option value="08">August</option>
-                <option value="09">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-            </select>
-            {role === "Manager" && (
+            <div>
                 <input
                     type="text"
-                    placeholder="Search card by percent..."
-                    value={selectedPercent}
-                    onChange={handlePercentChange}
+                    placeholder={searchBy === "card_number" ? "Search card by number..." : "Search card by surname..."}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={handleSearch}
                     className="search-bar-categories"
-                />)}
+                />
+                <button className="add-category" onClick={toggleSearchBy}>
+                    Change condition
+                </button>
 
-            {role === "Manager" &&(<button onClick={handlePrint} className="print-button">Print</button>)}
+
+                <button className="sort add-category" onClick={() => handleSort("card_number")}>Sort by number</button>
+
+                <button className="sort add-category" onClick={() => handleSort("cust_surname")}>Sort by Surname
+                </button>
+
+                <button className="add-category">
+                    <NavLink to="/add-card" className="add-category-text">Add Card</NavLink>
+                </button>
+
+                <select onChange={handleMonthChange} value={selectedMonth} className="search-bar-categories">
+                    <option value="">All Months</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                {role === "Manager" && (
+                    <input
+                        type="text"
+                        placeholder="Search card by percent..."
+                        value={selectedPercent}
+                        onChange={handlePercentChange}
+                        className="search-bar-categories"
+                    />)}
+
+                {role === "Manager" && (<button onClick={handlePrint} className="print-button">Print</button>)}
+            </div>
             {showPopup && Object.keys(popupData).map(cardNumber => (
                 <>
                     <div className="overlay"></div>

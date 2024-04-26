@@ -879,28 +879,106 @@ app.get('/search-employees-by-surname', (req, res) => {
             res.status(500).json({ error: error.message });
         });
 });
-app.get('/search-category', (req, res) => {
+app.get('/search-category-by-name', (req, res) => {
     const searchQuery = req.query.search;
     const { sortBy, sortOrder } = req.query;
     const orderBy = `${sortBy} ${sortOrder}`;
-    const searchCondition = `LOWER(category_name) LIKE LOWER($1 || '%') OR category_number=$1`;
-
-    db.any(`
-        SELECT *
-        FROM "Category"
-        WHERE ${searchCondition}
-        ORDER BY ${orderBy};
+    db.any(`SELECT *
+            FROM "Category"
+            WHERE LOWER(category_name) LIKE LOWER($1 || '%')
+            ORDER BY ${orderBy};
     `, [searchQuery])
-        .then(categories => {
-            res.json(categories);
+        .then(category => {
+            res.json(category);
         })
         .catch(error => {
             res.status(500).json({ error: error.message });
         });
 });
 
+app.get('/search-category-by-number', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT *
+            FROM "Category"
+            WHERE category_number = $1
+            ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(category => {
+            res.json(category);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+app.get('/search-check-by-number', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT *
+            FROM "Check"
+            WHERE check_number = $1
+            ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(check => {
+            res.json(check);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
 
+app.get('/search-store-product-by-upc', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT *
+            FROM "Store_Product" INNER JOIN "Product" P on "Store_Product".id_product = P.id_product
+            WHERE upc LIKE $1 || '%'
+            ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(stprod => {
+            res.json(stprod);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
 
+app.get('/search-card-by-name', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT *
+            FROM "Customer_Card"
+            WHERE LOWER(cust_surname) LIKE LOWER($1 || '%')
+            ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(card => {
+            res.json(card);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
+
+app.get('/search-card-by-number', (req, res) => {
+    const searchQuery = req.query.search;
+    const { sortBy, sortOrder } = req.query;
+    const orderBy = `${sortBy} ${sortOrder}`;
+    db.any(`SELECT *
+            FROM "Customer_Card"
+            WHERE LOWER(card_number) LIKE LOWER($1 || '%')
+            ORDER BY ${orderBy};
+    `, [searchQuery])
+        .then(card => {
+            res.json(card);
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+});
 /*
 * *
 * *

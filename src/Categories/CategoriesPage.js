@@ -12,6 +12,7 @@ const CategoriesPage = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [popupCategory, setPopupCategory] = useState(null);
 
+
     const [role, setRole] = useState('');
     useEffect(() => {
         const storedRole = localStorage.getItem('role');
@@ -21,23 +22,24 @@ const CategoriesPage = () => {
     }, []);
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch(`http://localhost:8081/get-category?sortBy=${sortBy}&sortOrder=${sortOrder}`);
-                if (!response.ok) {
-                    throw new Error('Could not fetch the categories');
-                }
-                const data = await response.json();
-                setCategories(data);
-                setFetchError(null);
-            } catch (error) {
-                setFetchError(error.message);
-                setCategories(null);
-            }
-        };
-
         fetchCategories();
     }, [sortBy, sortOrder]);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch(`http://localhost:8081/get-category?sortBy=${sortBy}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the categories');
+            }
+            const data = await response.json();
+            setCategories(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setCategories(null);
+        }
+    };
+
 
     const handleDeleteCategory = async (categoryNumber) => {
         try {
@@ -55,11 +57,6 @@ const CategoriesPage = () => {
         window.print();
     };
 
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        setSortBy("category_number");
-    };
-
     const handleSort = (columnName) => {
         if (sortBy === columnName) {
             setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
@@ -68,11 +65,6 @@ const CategoriesPage = () => {
             setSortOrder("ASC");
         }
     };
-
-    let filteredCategories = categories ? categories.filter(category =>
-        category.category_name.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
-        category.category_number === parseInt(searchQuery)
-    ) : [];
 
     const handlePopup = async (categoryNumber) => {
         setShowPopup(true);
@@ -88,12 +80,64 @@ const CategoriesPage = () => {
         }
     };
 
-
-
     const handleClosePopup = () => {
         setShowPopup(false);
         setPopupCategory(null);
     };
+
+    const [searchBy, setSearchBy] = useState("category_number");
+    const toggleSearchBy = () => {
+        setSearchBy(searchBy === "category_number" ? "category_name" : "category_number");
+    };
+
+    const handleSearch = (e) => {
+        if (e.key === 'Enter') {
+            if(searchBy === "category_number" && searchQuery!==''){
+                fetchByNumber(e.target.value)
+            } else if(searchBy === "category_name" && searchQuery!=='') {
+                fetchByName(e.target.value)
+            } else {
+                fetchCategories()
+            }
+            setSortBy('category_number');
+        }
+    };
+
+    const fetchByName = async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-category-by-name?search=${search}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the categories');
+            }
+            const data = await response.json();
+            setCategories(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setCategories(null);
+        }
+    };
+    const fetchByNumber = async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-category-by-number?search=${search}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the categories');
+            }
+            const data = await response.json();
+            setCategories(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setCategories(null);
+        }
+    };
+
+
+    let filteredCategories = categories ? categories.filter(category => category
+       // category.category_name.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
+        //category.category_number === parseInt(searchQuery)
+    ) : [];
+
 
     return (
         <div className="categories page">
@@ -101,27 +145,30 @@ const CategoriesPage = () => {
                 <MenuBar/>
             </div>
             {fetchError && (<p>{fetchError}</p>)}
-
-            <input
-                type="text"
-                placeholder="Search category by name or category number..."
-                value={searchQuery}
-                onChange={handleSearch}
-                className="search-bar-categories"
-            />
-
-            {role === "Manager" && (
-                <button className="add-category">
-                    <NavLink to="/add-category" className="add-category-text">Add Category</NavLink>
+            <div>
+                <input
+                    type="text"
+                    placeholder={searchBy === "category_name" ? "Search category by name..." : "Search category by number..."}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={handleSearch}
+                    className="search-bar-categories"
+                />
+                <button className="add-category" onClick={toggleSearchBy}>
+                    Change condition
                 </button>
-            )}
-
-            {role === "Cashier" && (
-                <button className="sort add-category" onClick={() => handleSort("category_number")}>Sort by
-                    number</button>)}
-
-            <button className="sort add-category" onClick={() => handleSort("category_name")}>Sort by name</button>
-            {role === "Manager" &&(<button onClick={handlePrint} className="print-button">Print</button>)}
+                {role === "Cashier" && (
+                    <button className="sort add-category" onClick={() => handleSort("category_number")}>Sort by
+                        number</button>
+                )}
+                <button className="sort add-category" onClick={() => handleSort("category_name")}>Sort by name</button>
+                {role === "Manager" && (<button onClick={handlePrint} className="print-button">Print</button>)}
+                {role === "Manager" && (
+                    <button className="add-category">
+                        <NavLink to="/add-category" className="add-category-text">Add Category</NavLink>
+                    </button>
+                )}
+            </div>
             {showPopup && (
                 <>
                     <div className="overlay"></div>

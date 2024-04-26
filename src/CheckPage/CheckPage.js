@@ -174,10 +174,37 @@ const CheckPage = () => {
     };
 
     const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
+        if (e.key === 'Enter') {
+            if(searchQuery!==''){
+                fetchChecksByNumber(e.target.value)
+            }else {
+                fetchChecks()
+            }
+        }
     };
-    let filteredChecks = checks ? (searchQuery.trim() === '' ? checks : checks.filter(check =>
-        check.check_number.trim() === searchQuery.trim()
+
+    const fetchChecksByNumber = async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-store?search=${search}&sortBy=${"check_number"}&sortOrder=${"ASC"}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the checks');
+            }
+            const data = await response.json();
+            const checksDataWithFormattedDate = data.map(check => {
+                const printDate = new Date(check.print_date);
+                const formattedPrintDate = printDate.toLocaleString();
+                return { ...check, print_date: formattedPrintDate };
+            });
+            setChecks(checksDataWithFormattedDate);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setChecks([]);
+        }
+    };
+
+    let filteredChecks = checks ? (searchQuery.trim() === '' ? checks : checks.filter(check => check
+        //check.check_number.trim() === searchQuery.trim()
     )) : [];
 
     const handleOpenPopup = (check) => {
@@ -231,7 +258,8 @@ const CheckPage = () => {
                 type="text"
                 placeholder="Search check by number..."
                 value={searchQuery}
-                onChange={handleSearch}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleSearch}
                 className="search-bar-categories"
             />
             {role === "Cashier" && (

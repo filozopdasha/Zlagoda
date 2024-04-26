@@ -51,7 +51,27 @@ const StoreProductsPage = () => {
     };
 
     const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
+        if (e.key === 'Enter') {
+            if(searchQuery!==''){
+                fetchByUPC(e.target.value)
+            }else {
+                fetchStoreProducts()
+            }
+        }
+    };
+    const fetchByUPC = async (search) => {
+        try {
+            const response = await fetch(`http://localhost:8081/search-store-product-by-upc?search=${search}&sortBy=${"products_number"}&sortOrder=${"ASC"}`);
+            if (!response.ok) {
+                throw new Error('Could not fetch the store products');
+            }
+            const data = await response.json();
+            setStoreProducts(data);
+            setFetchError(null);
+        } catch (error) {
+            setFetchError(error.message);
+            setStoreProducts(null);
+        }
     };
 
     const handleSort = (columnName) => {
@@ -122,8 +142,8 @@ const StoreProductsPage = () => {
     let filteredProducts = storeProducts ? [...storeProducts] : [];
 
     if (searchQuery.trim() !== "") {
-        filteredProducts = filteredProducts.filter(product =>
-            product.upc.toLowerCase().includes(searchQuery.toLowerCase())
+        filteredProducts = filteredProducts.filter(product => product
+            //product.upc.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }
 
@@ -141,7 +161,8 @@ const StoreProductsPage = () => {
                 type="text"
                 placeholder="Search products by UPC..."
                 value={searchQuery}
-                onChange={handleSearch}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleSearch}
                 className="search-bar-store-categories"
             />
             {role === "Manager" && (
